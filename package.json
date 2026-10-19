@@ -6,10 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed": "tsx scripts/seed.ts",
+    "validate": "tsx scripts/validate.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0",
+    "marked": "^18.1.1",
     "next": "16.4.2",
     "postgres": "^3.4.9",
     "react": "19.3.0",

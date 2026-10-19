@@ -1,40 +1,60 @@
 {
   "slug": "google-sign-in-basic-profile",
-  "version": 1,
-  "source": "generated",
+  "schemaVersion": 1,
+  "origin": "generated",
   "provider": {
     "name": "Google",
-    "url": "https://google.com",
-    "consoleUrl": "https://console.cloud.google.com",
-    "docsUrl": "https://developers.google.com/identity/protocols/oauth2"
+    "website": "https://google.com",
+    "developerPortal": "https://console.cloud.google.com",
+    "docsHome": "https://developers.google.com/identity/protocols/oauth2"
   },
   "title": "Sign in with Google (openid, email, profile only)",
   "useCase": "Login-only identity for an agent product: authenticate users with their Google Account and read name, email, and avatar. No Gmail, Drive, Calendar, or other user data.",
   "audience": "Developer who needs Google login for an agent product and wants to avoid Google's data-access verification entirely.",
-  "tags": ["google", "oidc", "sign-in", "identity", "non-sensitive"],
+  "assumptions": [
+    "Only openid, email, profile are requested; no Gmail/Drive/Calendar or other Google API scopes.",
+    "You register your own OAuth client (not a managed/brokered app such as one provided by an integration platform).",
+    "Web application client using the server-side authorization-code flow.",
+    "Login only: no offline access / refresh tokens needed.",
+    "Each end user's sign-in is a separate per-user authorization; registering the client does not grant access to any user."
+  ],
   "registration": {
-    "mode": "public",
+    "availability": "public",
     "summary": "Anyone with a Google Account can create a Google Cloud project and register an OAuth client in the Google Auth Platform (console.cloud.google.com/auth). No approval is needed to register. User type External + publishing status Testing is the default starting point; for the three identity scopes only, test users are NOT required and the 7-day Testing expiry does not apply. Publishing to production is a button click. Verification is not mandatory for non-sensitive-only apps; brand verification is needed only if you want your app name/logo shown on the consent screen.",
-    "claimIds": ["google-sign-in-basic-profile-c1", "google-sign-in-basic-profile-c5", "google-sign-in-basic-profile-c6", "google-sign-in-basic-profile-c9"]
+    "claimIds": [
+      "google-sign-in-basic-profile-c1",
+      "google-sign-in-basic-profile-c5",
+      "google-sign-in-basic-profile-c6",
+      "google-sign-in-basic-profile-c9"
+    ]
   },
   "scopes": [
     {
       "name": "openid",
       "purpose": "Issue an ID token with the user's stable subject (`sub`). Must be first in the scope string. Consent text: 'Associate you with your personal info on Google'. Non-sensitive.",
       "access": "public",
-      "claimIds": ["google-sign-in-basic-profile-c12", "google-sign-in-basic-profile-c13"]
+      "claimIds": [
+        "google-sign-in-basic-profile-c12",
+        "google-sign-in-basic-profile-c13"
+      ]
     },
     {
       "name": "email",
       "purpose": "Adds `email` and `email_verified` claims to the ID token. Equivalent to https://www.googleapis.com/auth/userinfo.email. Consent text: 'See your primary Google Account email address'. Non-sensitive.",
       "access": "public",
-      "claimIds": ["google-sign-in-basic-profile-c12", "google-sign-in-basic-profile-c13"]
+      "claimIds": [
+        "google-sign-in-basic-profile-c12",
+        "google-sign-in-basic-profile-c13"
+      ]
     },
     {
       "name": "profile",
       "purpose": "Adds name/picture claims (not guaranteed) to the ID token. Equivalent to https://www.googleapis.com/auth/userinfo.profile. Consent text: 'See your personal info, including any personal info you've made publicly available'. Non-sensitive.",
       "access": "public",
-      "claimIds": ["google-sign-in-basic-profile-c12", "google-sign-in-basic-profile-c13"]
+      "claimIds": [
+        "google-sign-in-basic-profile-c12",
+        "google-sign-in-basic-profile-c13"
+      ]
     }
   ],
   "difficulty": {
@@ -45,41 +65,69 @@
     "kind": "estimated",
     "value": "30–60 min",
     "basis": "Create project, configure Branding/Audience, create a Web client with redirect URIs, wire up the OIDC flow. Add 1–2 hours if you also do brand verification (Search Console domain verification, homepage and privacy policy prep).",
-    "claimIds": ["google-sign-in-basic-profile-c1", "google-sign-in-basic-profile-c15"]
+    "claimIds": [
+      "google-sign-in-basic-profile-c1",
+      "google-sign-in-basic-profile-c15"
+    ]
   },
   "providerWait": {
     "kind": "documented",
     "value": "None for login itself. Brand verification (optional): automated check 'typically takes a few minutes'; manual fallback 'usually takes 2-3 business days'.",
     "basis": "Google's brand-verification page and verification FAQ publish these figures; both say estimates are not guaranteed.",
-    "claimIds": ["google-sign-in-basic-profile-c10", "google-sign-in-basic-profile-c11"]
+    "claimIds": [
+      "google-sign-in-basic-profile-c10",
+      "google-sign-in-basic-profile-c11"
+    ]
   },
   "reviewStages": [
     {
       "name": "App (scope) verification",
-      "description": "Google's full OAuth app verification (scope justification, demo video, possibly security assessment). Not mandatory when only non-sensitive scopes are requested.",
-      "applies": "never",
       "trigger": "Only triggered if you add a sensitive or restricted scope. With openid/email/profile only, no verification is required to go to production.",
+      "applies": "never",
+      "wait": {
+        "kind": "unknown",
+        "value": "Not published",
+        "claimIds": []
+      },
       "url": "https://support.google.com/cloud/answer/9110914",
-      "wait": { "kind": "unknown", "value": "Not published", "claimIds": [] },
-      "claimIds": ["google-sign-in-basic-profile-c9", "google-sign-in-basic-profile-c20"]
+      "claimIds": [
+        "google-sign-in-basic-profile-c9",
+        "google-sign-in-basic-profile-c20"
+      ]
     },
     {
       "name": "Brand verification",
-      "description": "Lighter-weight review of app name, logo, URLs, and domain ownership so your name/logo appear on the consent screen instead of just your domain. Mostly automated.",
-      "applies": "conditional",
       "trigger": "User type External + status In production AND you want a logo or display name shown on the consent screen. Changing name/logo/URLs later re-triggers it. Without it, only your application domain is shown to users.",
+      "applies": "conditional",
+      "wait": {
+        "kind": "documented",
+        "value": "A few minutes (automated); 2-3 business days (manual)",
+        "basis": "Published on the brand-verification page and verification FAQ.",
+        "claimIds": [
+          "google-sign-in-basic-profile-c10",
+          "google-sign-in-basic-profile-c11"
+        ]
+      },
       "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/brand-verification",
-      "wait": { "kind": "documented", "value": "A few minutes (automated); 2-3 business days (manual)", "basis": "Published on the brand-verification page and verification FAQ.", "claimIds": ["google-sign-in-basic-profile-c10", "google-sign-in-basic-profile-c11"] },
-      "claimIds": ["google-sign-in-basic-profile-c9", "google-sign-in-basic-profile-c14", "google-sign-in-basic-profile-c15"]
+      "claimIds": [
+        "google-sign-in-basic-profile-c9",
+        "google-sign-in-basic-profile-c14",
+        "google-sign-in-basic-profile-c15"
+      ]
     },
     {
       "name": "Workspace org-admin consent",
-      "description": "Separate from Google review. A Workspace admin can restrict third-party apps for their users; Internal-user-type apps are limited to the project's org.",
-      "applies": "conditional",
       "trigger": "Only if a user's Workspace org restricts third-party app access, or if you pick user type Internal (then only org members can sign in; others get org_internal).",
+      "applies": "conditional",
+      "wait": {
+        "kind": "unknown",
+        "value": "Not published",
+        "claimIds": []
+      },
       "url": "https://support.google.com/cloud/answer/15549945",
-      "wait": { "kind": "unknown", "value": "Not published", "claimIds": [] },
-      "claimIds": ["google-sign-in-basic-profile-c4"]
+      "claimIds": [
+        "google-sign-in-basic-profile-c4"
+      ]
     }
   ],
   "prerequisites": [
@@ -102,42 +150,63 @@
       "url": "https://console.developers.google.com/auth/clients",
       "owner": "human",
       "ownerNote": "Requires Google login (and possibly 2-step verification) and accepting Cloud terms.",
-      "claimIds": ["google-sign-in-basic-profile-c1"]
+      "claimIds": [
+        "google-sign-in-basic-profile-c1"
+      ]
     },
     {
       "title": "Configure Branding",
       "details": "Set app name, user support email, and developer contact email. Skip the logo for now: uploading one for an External app requires brand verification before it shows. Homepage/privacy/terms links are required for external production apps that want verified branding.",
       "url": "https://console.cloud.google.com/auth/branding",
       "owner": "either",
-      "claimIds": ["google-sign-in-basic-profile-c14", "google-sign-in-basic-profile-c15"]
+      "claimIds": [
+        "google-sign-in-basic-profile-c14",
+        "google-sign-in-basic-profile-c15"
+      ]
     },
     {
       "title": "Configure Audience: user type and publishing status",
       "details": "Choose External (any Google Account) unless the app is strictly for your own Workspace org (Internal, no verification, org_internal error for outsiders). New External projects start in Testing. Because this app only requests openid/email/profile, users do not need to be on the test-user list, see no warning, and the 7-day expiry does not apply even in Testing.",
       "url": "https://console.cloud.google.com/auth/audience",
       "owner": "either",
-      "claimIds": ["google-sign-in-basic-profile-c2", "google-sign-in-basic-profile-c3", "google-sign-in-basic-profile-c4", "google-sign-in-basic-profile-c5", "google-sign-in-basic-profile-c6"]
+      "claimIds": [
+        "google-sign-in-basic-profile-c2",
+        "google-sign-in-basic-profile-c3",
+        "google-sign-in-basic-profile-c4",
+        "google-sign-in-basic-profile-c5",
+        "google-sign-in-basic-profile-c6"
+      ]
     },
     {
       "title": "Confirm Data Access lists only the identity scopes",
       "details": "The Sign-In scopes are pre-filled in the Non-sensitive section. Do not add anything else; any additional scope voids the identity exemption and can trigger the unverified-app screen and 100-user cap. Requested scopes in code must match the console configuration.",
       "url": "https://console.cloud.google.com/auth/scopes",
       "owner": "either",
-      "claimIds": ["google-sign-in-basic-profile-c6", "google-sign-in-basic-profile-c13", "google-sign-in-basic-profile-c18"]
+      "claimIds": [
+        "google-sign-in-basic-profile-c6",
+        "google-sign-in-basic-profile-c13",
+        "google-sign-in-basic-profile-c18"
+      ]
     },
     {
       "title": "Create an OAuth client (Web application)",
       "details": "Click CREATE CLIENT, choose Web application, add Authorized JavaScript origins and Authorized redirect URIs. Localhost (http://localhost:PORT) is allowed for dev; production URIs must be HTTPS, not raw IPs, no wildcards. Save the client secret immediately; it is shown only once. Redirect URI changes may take 5 minutes to a few hours to apply.",
       "url": "https://console.developers.google.com/auth/clients",
       "owner": "agent",
-      "claimIds": ["google-sign-in-basic-profile-c1", "google-sign-in-basic-profile-c16", "google-sign-in-basic-profile-c17"]
+      "claimIds": [
+        "google-sign-in-basic-profile-c1",
+        "google-sign-in-basic-profile-c16",
+        "google-sign-in-basic-profile-c17"
+      ]
     },
     {
       "title": "Implement the OIDC authorization-code flow",
       "details": "Request scope=openid email profile (openid must be first). Exchange the code at the token endpoint and validate the ID token; use `sub` as the stable user ID, `email`/`email_verified` for email. Do not request access_type=offline unless you need refresh tokens; login does not.",
       "url": "https://developers.google.com/identity/protocols/oauth2/openid-connect",
       "owner": "agent",
-      "claimIds": ["google-sign-in-basic-profile-c12"]
+      "claimIds": [
+        "google-sign-in-basic-profile-c12"
+      ]
     },
     {
       "title": "Publish the app (Testing -> In production)",
@@ -145,7 +214,10 @@
       "url": "https://console.cloud.google.com/auth/audience",
       "owner": "human",
       "ownerNote": "Publishing is an attestation that the app is production-ready; Google treats it as the production tier.",
-      "claimIds": ["google-sign-in-basic-profile-c7", "google-sign-in-basic-profile-c9"]
+      "claimIds": [
+        "google-sign-in-basic-profile-c7",
+        "google-sign-in-basic-profile-c9"
+      ]
     },
     {
       "title": "Optional: brand verification for name/logo on the consent screen",
@@ -153,7 +225,12 @@
       "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/brand-verification",
       "owner": "human",
       "ownerNote": "Search Console verification and the privacy-policy representation are legal/ownership attestations.",
-      "claimIds": ["google-sign-in-basic-profile-c10", "google-sign-in-basic-profile-c14", "google-sign-in-basic-profile-c15", "google-sign-in-basic-profile-c19"]
+      "claimIds": [
+        "google-sign-in-basic-profile-c10",
+        "google-sign-in-basic-profile-c14",
+        "google-sign-in-basic-profile-c15",
+        "google-sign-in-basic-profile-c19"
+      ]
     }
   ],
   "testing": {
@@ -167,7 +244,13 @@
       "Separately, apps that show the unverified-app screen (sensitive/restricted scopes without verification) have a lifetime cap of 100 new users that cannot be reset. Not applicable to identity-only apps.",
       "Without brand verification the consent screen shows only your application domain, not your app name or logo."
     ],
-    "claimIds": ["google-sign-in-basic-profile-c5", "google-sign-in-basic-profile-c6", "google-sign-in-basic-profile-c8", "google-sign-in-basic-profile-c14", "google-sign-in-basic-profile-c18"]
+    "claimIds": [
+      "google-sign-in-basic-profile-c5",
+      "google-sign-in-basic-profile-c6",
+      "google-sign-in-basic-profile-c8",
+      "google-sign-in-basic-profile-c14",
+      "google-sign-in-basic-profile-c18"
+    ]
   },
   "launch": {
     "requirements": [
@@ -177,43 +260,63 @@
       "Optional but recommended for trust: brand verification (verified domain in Search Console, public homepage, privacy policy on same domain linked from consent screen).",
       "Comply with Google API Services User Data Policy regardless of verification status."
     ],
-    "claimIds": ["google-sign-in-basic-profile-c7", "google-sign-in-basic-profile-c9", "google-sign-in-basic-profile-c15", "google-sign-in-basic-profile-c16", "google-sign-in-basic-profile-c19"]
+    "claimIds": [
+      "google-sign-in-basic-profile-c7",
+      "google-sign-in-basic-profile-c9",
+      "google-sign-in-basic-profile-c15",
+      "google-sign-in-basic-profile-c16",
+      "google-sign-in-basic-profile-c19"
+    ]
   },
   "blockers": [
     {
       "title": "redirect_uri_mismatch",
-      "symptom": "Authorization request fails with redirect_uri_mismatch.",
+      "description": "Authorization request fails with redirect_uri_mismatch.",
       "recovery": "The redirect_uri must exactly match a registered URI including scheme, case, and trailing slash. Fix the client's Authorized redirect URIs; changes may take 5 minutes to a few hours to propagate.",
-      "supportUrl": "https://developers.google.com/identity/protocols/oauth2/web-server",
-      "claimIds": ["google-sign-in-basic-profile-c17"]
+      "escalationUrl": "https://developers.google.com/identity/protocols/oauth2/web-server",
+      "claimIds": [
+        "google-sign-in-basic-profile-c17"
+      ]
     },
     {
       "title": "Unverified-app screen or 100-user cap appears",
-      "symptom": "Users see 'Google hasn't verified this app' and the console shows OAuth user cap usage.",
+      "description": "Users see 'Google hasn't verified this app' and the console shows OAuth user cap usage.",
       "recovery": "You requested a scope beyond openid/email/profile. Remove it from code and from Data Access, or submit for app verification. The lifetime 100-new-user cap cannot be reset without verification.",
-      "supportUrl": "https://support.google.com/cloud/answer/7454865",
-      "claimIds": ["google-sign-in-basic-profile-c8", "google-sign-in-basic-profile-c18", "google-sign-in-basic-profile-c20"]
+      "escalationUrl": "https://support.google.com/cloud/answer/7454865",
+      "claimIds": [
+        "google-sign-in-basic-profile-c8",
+        "google-sign-in-basic-profile-c18",
+        "google-sign-in-basic-profile-c20"
+      ]
     },
     {
       "title": "org_internal error",
-      "symptom": "Users outside your organization cannot sign in.",
+      "description": "Users outside your organization cannot sign in.",
       "recovery": "User type is Internal. Switch to External on the Audience page (then publish) to allow any Google Account.",
-      "supportUrl": "https://support.google.com/cloud/answer/15549945",
-      "claimIds": ["google-sign-in-basic-profile-c4"]
+      "escalationUrl": "https://support.google.com/cloud/answer/15549945",
+      "claimIds": [
+        "google-sign-in-basic-profile-c4"
+      ]
     },
     {
       "title": "Brand verification stuck / 'Need to re-verify'",
-      "symptom": "Verify Branding fails or the status reverts.",
+      "description": "Verify Branding fails or the status reverts.",
       "recovery": "Ensure every authorized domain is verified in Search Console by a project Owner/Editor, the homepage is public and not just a login page, and the privacy policy is on the same domain and linked on the consent screen. Compliant results are valid 7 days; publish branding within that window. Branding edits are blocked during review.",
-      "supportUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/brand-verification",
-      "claimIds": ["google-sign-in-basic-profile-c10", "google-sign-in-basic-profile-c15", "google-sign-in-basic-profile-c19"]
+      "escalationUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/brand-verification",
+      "claimIds": [
+        "google-sign-in-basic-profile-c10",
+        "google-sign-in-basic-profile-c15",
+        "google-sign-in-basic-profile-c19"
+      ]
     },
     {
       "title": "Lost client secret",
-      "symptom": "Secret not visible in console after creation.",
+      "description": "Secret not visible in console after creation.",
       "recovery": "Secrets are shown only once at creation. Create a new client secret/client and rotate.",
-      "supportUrl": "https://support.google.com/cloud/answer/6158849",
-      "claimIds": ["google-sign-in-basic-profile-c1"]
+      "escalationUrl": "https://support.google.com/cloud/answer/6158849",
+      "claimIds": [
+        "google-sign-in-basic-profile-c1"
+      ]
     }
   ],
   "nextActions": [

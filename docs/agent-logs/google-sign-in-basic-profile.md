@@ -24,7 +24,7 @@
 - WebFetch summarizer truncates quotes at ~125 chars; excerpts were assembled from multiple confirmed fragments of the same page (joined with "...").
 
 ## What was automated
-All research via WebSearch/WebFetch; no console setup performed (no firsthand_test claims). 22 claims, 21 supported, 1 partially_supported.
+All research via WebFetch; no console setup performed (no firsthand_test claims). 22 claims: 21 supported, 1 partially_supported (c22). First write used non-schema field names; remapped to lib/schema.ts and revalidated OK.
 
 ## Uncertain
 - Whether an identity-only app can sit in Testing forever with zero user cap; Google exempts it from the test list/warning/7-day expiry but never literally says "no cap". Recommend publishing anyway.
