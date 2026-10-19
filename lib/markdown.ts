@@ -4,7 +4,8 @@ import { marked } from "marked";
 
 // Repo-authored markdown only, so no sanitizing.
 export function renderMarkdown(src: string): string {
-  return marked.parse(src, { gfm: true, async: false });
+  // Setup-note images are copied to public/setup-notes/img by the prebuild script.
+  return (marked.parse(src, { gfm: true, async: false }) as string).replaceAll(`src="img/`, `src="/setup-notes/img/`);
 }
 
 /** Reads markdown files under docs/; returns null if none exist. */

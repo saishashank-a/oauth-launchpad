@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OAuth Launchpad
 
-## Getting Started
+Guides for developers building AI agents who need their **own** provider OAuth app. Each guide covers one use case and one scope set. It answers what you can test today, what must happen before real users can connect, how much hands-on work to expect, which reviews or waits apply, what can block you, and which steps an agent can do versus a human. Factual claims carry their own evidence.
 
-First, run the development server:
+> **Submission status: incomplete.** See [Limitations](#limitations). The app builds and runs locally with durable Postgres storage. Live generation is implemented but has not run end to end, because no Anthropic or Tavily key was available. It is not deployed yet: the Vercel CLI token on the build machine had expired.
+
+## Concepts the guides keep separate
+
+| Term | Meaning here |
+|---|---|
+| **OAuth app** | The client you register with the provider: client ID, secret, redirect URIs, branding. You own it. |
+| **Integration** | Your product's code and config that use that app, for example a Composio auth config that points at your client ID. |
+| **Connection** | One end user's authorization, which yields tokens for that user. Many connections share one app. |
+| **Testing vs distribution** | Testing means you or listed test users authorize the app. Distribution means arbitrary external users or workspaces can. |
+| **Provider review vs admin consent** | Review is the provider vetting your app, such as Google verification or Slack Marketplace review. Admin consent is a customer's own admin allowing your app in their org, such as Entra admin consent or GitHub org app approval. Passing one does not give you the other. |
+| **Managed vs own app** | A managed app is registered by a platform like Composio, so its name appears on consent, its scopes are defaults, and its quota is shared. Your own app needs registration and any review, but carries your brand and your scopes. See [Composio managed auth](https://docs.composio.dev/toolkits/managed-auth). |
+
+## Local setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local      # fill DATABASE_URL at minimum
+npm run validate                # schema + evidence-rule checks on data/guides/*.json
+npm run seed                    # upsert curated guides into Postgres
+npm run dev                     # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Variable | Needed for |
+|---|---|
+| `DATABASE_URL` | Guide storage and share URLs. Use a Supabase pooled connection string on port 6543. Without it, pages read the curated JSON files read-only. |
+| `ANTHROPIC_API_KEY` | Live generation: claim extraction and guide drafting. |
+| `TAVILY_API_KEY` | Live generation: web search. |
+| `GENERATE_RATE_LIMIT_PER_HOUR` | Per-IP limit. Defaults to 5. |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Without the two API keys, the generate endpoint returns a `missing_config` error. There is no mock fallback.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Other checks:
 
-## Learn More
+```bash
+npx tsc --noEmit
+npm run build
+npx tsx scripts/check-safefetch.mts   # SSRF guard: rejects localhost, private ranges, metadata IP, odd ports
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Architecture
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+app/page.tsx              library: search, cards, generate form
+app/g/[slug]/page.tsx     guide page, the shareable URL
+app/notes|audit|agent-log setup notes, fact-check audit, agent work log (rendered from docs/)
+app/api/generate          POST {query, website?} -> NDJSON progress stream
+lib/schema.ts             Zod Guide schema + validateGuide() cross-reference/evidence checks
+lib/research.ts           research workflow (below)
+lib/safeFetch.ts          SSRF-safe fetch + verbatim excerpt matcher
+lib/search.ts, lib/llm.ts Tavily search, Anthropic JSON calls with Zod validation and one repair retry
+lib/db.ts                 Postgres: one `guides` table, jsonb body, slug primary key
+data/guides/*.json        curated guides (source of truth, seeded into the DB)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Research workflow.** Research, synthesis and validation are separate steps, so missing evidence shows up instead of being papered over.
 
-## Deploy on Vercel
+1. **Identify.** A URL or domain is used as given. A name is searched, and the model proposes candidate identities. If confidence is low or two candidates are close, the endpoint returns them for the user to pick, and nothing is saved.
+2. **Search.** Up to five fixed queries cover registration, scopes, review, redirect URIs and partner programs. Results from the official domain rank first, and at most 8 URLs are kept.
+3. **Fetch.** Each URL goes through `safeFetch`, four at a time. Failures are logged, not hidden.
+4. **Extract.** The model returns claims with a source URL and a verbatim excerpt. **Code, not the model, sets the status.** If the excerpt is found on the fetched page, the claim is `supported`. Otherwise it is `unverified`. Category comes from the domain: official doc or community.
+5. **Gaps.** Topics with no supported claim go into `unresolved`. If registration has no supported claim, availability is forced to `undocumented` or `unknown`.
+6. **Synthesize.** The model drafts the guide and may cite only the claim IDs it was given. `validateGuide` runs, and the draft gets one repair retry.
+7. **Enforce.** Unknown claim IDs are stripped. A provider wait or review wait not backed by a verified claim becomes "Not published". A `firsthand_test` claim cannot be generated.
+8. **Save.** The guide is upserted and the response returns `/g/<slug>`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Budgets: a 240-second deadline, at most 6 searches (1 to identify the provider, 5 for research) and 8 fetches, 400 KB per page, 12-second timeouts, and 3 model calls plus repair retries. The rate limit is 5 per IP per hour and 30 per hour per instance.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Evidence methodology
+
+Each claim records an ID, text, a **status** (supported, partially supported, unverified, conflicting), a **category** (firsthand test, official doc, community, inference), a source URL, an excerpt or observation, the date checked, and a setup-attempt reference where one applies. Status and category are independent: an official page can still be ambiguous.
+
+- **Curated guides** were written by research agents under [`docs/research-brief.md`](docs/research-brief.md). A claim is supported only if the agent fetched the page in that session and quoted it. Recollection is marked unverified inference. Agents could not mark anything firsthand.
+- **Firsthand claims** come only from real browser sessions, recorded in [`docs/setup-notes/`](docs/setup-notes/) with redacted screenshots.
+- **Timing** is `observed` when measured in a setup attempt, `documented` when the provider publishes a figure, `estimated` for developer effort only (always shown with its basis), and `unknown`, displayed as "Not published", otherwise.
+- **Difficulty and effort** are labelled assessments in the UI and come with a rationale.
+- **Fact-check:** independent agents fetched sources again and audited high-impact claims, and corrections were applied to the guides. See [`docs/FACT-CHECK.md`](docs/FACT-CHECK.md).
+- `npm run validate` enforces the rules: every referenced claim exists, supported claims have a URL and excerpt, firsthand claims have a setup reference, and IDs are stable.
+
+## Key decisions
+
+- **Guide equals one use case plus one scope set.** Google appears twice, for sign-in and for Gmail, because their requirements differ by orders of magnitude. No provider gets a universal difficulty score.
+- **JSON files for curated guides, Postgres for everything served.** Curated guides are diffable and reviewable in git. Generated guides need durable shared storage, so nothing is written to the filesystem or localStorage.
+- **Code decides verification status.** The model proposes, and a string match against the fetched page decides. A model quote that is not on the page is never shown as "partially supported".
+- **Tavily for search**, because it is a simple managed API. Pages are fetched by our own SSRF-guarded fetcher, so the excerpt check runs on content we retrieved ourselves.
+- **No auth, no vector DB, no queue.** A single NDJSON streaming request reports real stage progress.
+
+## Investigations and audit
+
+- **Setup notes:** [`docs/setup-notes/`](docs/setup-notes/), shown at `/notes`.
+  - GitHub: app registered, consent screen observed, measured click path.
+  - Google: read-only console inspection that resolved the 100-user-cap question.
+  - Slack: blocked at sign-in, with a pending checklist.
+- **Fact-check audit:** [`docs/FACT-CHECK.md`](docs/FACT-CHECK.md), shown at `/audit`.
+- **Agent work log:** [`docs/AGENT-LOG.md`](docs/AGENT-LOG.md), shown at `/agent-log`, plus the per-guide logs in [`docs/agent-logs/`](docs/agent-logs/).
+
+## Limitations
+
+- **Not deployed.** The Vercel CLI token had expired. To deploy, run `vercel login`, then `vercel link`, set the env vars with `vercel env add`, then `vercel --prod`. The guide route's `maxDuration` is 300 s, which needs a plan that allows it.
+- **Live generation not exercised.** The workflow is implemented, type-checked and tested only up to the `missing_config` path. Success, partial and failure paths with real keys are untested.
+- **The rate limit is held in memory per instance.** Use Upstash or Postgres for a global limit.
+- **Firsthand coverage is thin.** There is one real registration, on GitHub. Google was read-only and Slack was blocked. Nothing was submitted for provider review, so no wait time is observed.
+- **Docs drift.** Every claim has a check date. Re-run the audit before relying on timelines.
+- **A missing slug renders the not-found page with HTTP 200**, because of streaming. The page is marked `noindex`.

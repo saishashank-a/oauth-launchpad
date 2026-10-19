@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx scripts/seed.ts",
-    "validate": "tsx scripts/validate.ts"
+    "validate": "tsx scripts/validate.ts",
+    "prebuild": "mkdir -p public/setup-notes && cp -R docs/setup-notes/img public/setup-notes/",
+    "predev": "mkdir -p public/setup-notes && cp -R docs/setup-notes/img public/setup-notes/"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0",

@@ -34,5 +34,5 @@ Set `"origin": "curated"` for files in data/guides. `"generated"` is only for gu
 1. Read lib/schema.ts.
 2. WebSearch for official docs: app registration, OAuth flow, scopes list, distribution/publishing, app review/verification, rate limits/caps, admin consent.
 3. WebFetch each key page; extract quotes.
-4. Write JSON. Then run: `cd /Users/saishashankanchuri/dev/oauth-launchpad && npx tsx scripts/validate.ts data/guides/<slug>.json` and fix until it prints OK.
+4. Write JSON. Then run: `npx tsx scripts/validate.ts data/guides/<slug>.json` and fix until it prints OK.
 5. Write docs/agent-logs/<slug>.md: sources used (URLs), what was automated, what failed/404'd/was paywalled, what remains uncertain. ≤ 40 lines.

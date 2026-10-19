@@ -90,7 +90,9 @@
     "claimIds": [
       "google-gmail-read-send-agent-c7",
       "google-gmail-read-send-agent-c8",
-      "google-gmail-read-send-agent-c9"
+      "google-gmail-read-send-agent-c9",
+      "google-gmail-read-send-agent-c30",
+      "google-gmail-read-send-agent-c31"
     ]
   },
   "reviewStages": [
@@ -119,9 +121,11 @@
       "wait": {
         "kind": "documented",
         "value": "Conflicting: 10 business days (FAQ) vs 3-5 business days (sensitive-scope page)",
-        "basis": "Two official Google pages publish different figures.",
+        "basis": "Two official Google pages publish different figures for the same process: FAQ 10 business days (c30), sensitive-scope page 3-5 business days (c31); see c8.",
         "claimIds": [
-          "google-gmail-read-send-agent-c8"
+          "google-gmail-read-send-agent-c8",
+          "google-gmail-read-send-agent-c30",
+          "google-gmail-read-send-agent-c31"
         ]
       },
       "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
@@ -463,7 +467,7 @@
       "status": "supported",
       "category": "official_doc",
       "sourceUrl": "https://support.google.com/cloud/answer/13463817",
-      "excerpt": "Restricted scope verification: 6 weeks. Please note that these estimates are not guaranteed and will vary based on developer responsiveness. (Restricted page: 'the restricted scopes verification process can potentially take several weeks to complete')",
+      "excerpt": "FAQ table (Type | Purpose | Expected time of completion*): 'Restricted Scope Verification Ensure that an app does not misuse user data obtained using restricted scopes per the Google API policy and the Additional Requirements for Specific API Scopes . An additional Security assessment is required to demonstrate a minimum level of capability in handling data securely and deleting user data upon user request. 6 weeks * Please note that these estimates are not guaranteed and will vary based on developer responsiveness' ... Restricted page: 'the restricted scopes verification process can potentially take several weeks to complete'",
       "dateChecked": "2026-10-20"
     },
     {
@@ -472,7 +476,7 @@
       "status": "conflicting",
       "category": "official_doc",
       "sourceUrl": "https://support.google.com/cloud/answer/13463817",
-      "excerpt": "FAQ (support.google.com/cloud/answer/13463817): 'Sensitive scope verification: 10 Business days'. Sensitive-scope page (developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification): 'The sensitive scope verification process typically takes 3-5 business days to complete.'",
+      "excerpt": "FAQ table (https://support.google.com/cloud/answer/13463817): 'Sensitive Scope Verification Ensure that an app's usage of sensitive scopes is not deceptive and in alignment with the appropriate use case, limited use, and minimum scope requirements, to protect user data per the Google API policy and the Additional Requirements for Specific API Scopes . 10 Business days'. Sensitive-scope page (https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification): 'The sensitive scope verification process typically takes 3-5 business days to complete.' Both pages name the same process (sensitive scope verification) and neither explains the difference, so this is a real conflict, not two processes.",
       "dateChecked": "2026-10-20"
     },
     {
@@ -630,10 +634,10 @@
     {
       "id": "google-gmail-read-send-agent-c26",
       "text": "CASA is OWASP ASVS-based, assigns AL1 or AL2 by risk, issues a Letter of Validation, requires yearly revalidation, and is the final step of restricted review; Google contacts you to start it.",
-      "status": "partially_supported",
+      "status": "supported",
       "category": "official_doc",
       "sourceUrl": "https://support.google.com/cloud/answer/13465431",
-      "excerpt": "Fetch returned degraded text; key fragments: 'Applications ... assigned either AL1 or AL2 assurance level', 'All applications must ... revalidated every year', 'A security assessment ... final step ... restricted scopes review process'. No cost or exemption text found.",
+      "excerpt": "Standardized requirements based on the OWASP's app Security Verification Standard (ASVS) ... Applications are assigned to either the AL1 or AL2 assurance level. ... awarded a \"Letter of Validation\" (LOV) ... All applications must be revalidated every year. ... A security assessment is the final step of the restricted scopes review process. ... the Google Trust and Safety team will contact you when it is time to initiate the security assessment process.",
       "dateChecked": "2026-10-20"
     },
     {
@@ -660,6 +664,24 @@
       "category": "official_doc",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
       "excerpt": "if you are the only user of your app or if your app is used by only a few users, all of whom are known personally to you",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c30",
+      "text": "Google's verification FAQ gives 10 business days as the expected time for sensitive scope verification (estimate, not guaranteed).",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/13463817",
+      "excerpt": "Sensitive Scope Verification Ensure that an app's usage of sensitive scopes is not deceptive and in alignment with the appropriate use case, limited use, and minimum scope requirements, to protect user data per the Google API policy and the Additional Requirements for Specific API Scopes . 10 Business days ... Please note that these estimates are not guaranteed and will vary based on developer responsiveness",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c31",
+      "text": "Google's sensitive-scope verification page says the process typically takes 3-5 business days.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+      "excerpt": "The sensitive scope verification process typically takes 3-5 business days to complete.",
       "dateChecked": "2026-10-20"
     }
   ],
