@@ -1,7 +1,7 @@
 {
   "slug": "slack-app-workspace-agent",
   "schemaVersion": 1,
-  "origin": "generated",
+  "origin": "curated",
   "provider": {
     "name": "Slack",
     "website": "https://slack.com",
@@ -82,7 +82,7 @@
   },
   "providerWait": {
     "kind": "documented",
-    "value": "None for unlisted public distribution. Marketplace: preliminary feedback up to 10 business days, functional feedback up to 10 weeks (6 weeks for resubmitted published apps)",
+    "value": "Unlisted public distribution: not published (no Slack review documented). Slack Marketplace: preliminary feedback up to 10 business days, functional review up to 10 weeks (6 weeks for published apps resubmitting changes)",
     "basis": "Figures quoted from Slack's Marketplace review guide. Unlisted distribution has no documented review. Customer-admin approval times are set by each customer and not published.",
     "claimIds": [
       "slack-app-workspace-agent-c11",
@@ -539,12 +539,12 @@
     },
     {
       "id": "slack-app-workspace-agent-c17",
-      "text": "Boundary cases of the 2025 change are ambiguous: the changelog says apps created 'after' May 29, 2025 in one section and 'on or after' in another, does not define 'commercially distributed', and does not say whether a reinstall counts as a net new installation.",
+      "text": "Boundary cases of the 2025 rate-limit change are not fully pinned down: the per-method text says apps 'created after May 29, 2025' while the summary says new apps are subject 'immediately, as of May 29, 2025' (the 'on or after' wording on the page applies to the updated API Terms, not the rate limits). The page does not define 'commercially distributed' or say whether a reinstall counts as a net new installation. Internal customer-built apps are explicitly exempt.",
       "status": "partially_supported",
       "category": "official_doc",
       "dateChecked": "2026-10-20",
       "sourceUrl": "https://docs.slack.dev/changelog/2025/05/29/rate-limit-changes-for-non-marketplace-apps",
-      "excerpt": "Same page: rate-limit section says apps \"created after May 29, 2025, and for net new installations of existing apps\"; terms section says \"effective immediately for applications created on or after May 29, 2025.\" Reinstalls are not mentioned."
+      "excerpt": "The updated terms are effective immediately for applications created on or after May 29, 2025. ... New non-Marketplace applications and new installations of existing non-Marketplace applications will be subject to the updated rate limits immediately, as of May 29, 2025. ... rate limit for commercially distributed apps created after May 29, 2025 , and for net new installations of existing apps, will be limited to 1 request per minute ... No, internal customer-built apps are not impacted and retain their current, higher rate limits. (No definition of 'commercially distributed' and no mention of reinstalls found on the page.)"
     },
     {
       "id": "slack-app-workspace-agent-c18",
@@ -684,7 +684,7 @@
   ],
   "unresolved": [
     "Whether reinstalling an existing (pre-May-29-2025) installation counts as a 'net new installation' and loses grandfathered Tier 3 history limits; the changelog does not say.",
-    "Exact cut-off ('after' vs 'on or after' May 29, 2025) and the definition of 'commercially distributed'. The changelog is internally inconsistent and says affected developers 'will receive notice', implying possible future changes to existing installs.",
+    "Whether apps created on May 29, 2025 itself are covered (per-method text says 'created after', summary says 'as of May 29, 2025'; the 'on or after' wording refers to the API Terms) and the definition of 'commercially distributed'. The changelog says affected developers 'will receive notice', implying possible future changes to existing installs.",
     "Whether activating public distribution involves any Slack-side review: inferred 'no' from the distribution page's contrast with Marketplace, not stated explicitly. The checklist items were not enumerated on the fetched page.",
     "Whether http://localhost redirect URLs are accepted for development; the docs only say HTTPS is required.",
     "Whether a non-distributed app can be installed org-wide in an Enterprise org, and whether org_deploy_enabled can be reverted; the org-ready page did not say.",
