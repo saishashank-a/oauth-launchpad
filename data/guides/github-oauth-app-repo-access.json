@@ -1,7 +1,7 @@
 {
   "slug": "github-oauth-app-repo-access",
   "schemaVersion": 1,
-  "origin": "generated",
+  "origin": "curated",
   "provider": {
     "name": "GitHub",
     "website": "https://github.com",
@@ -20,26 +20,39 @@
   "registration": {
     "availability": "public",
     "summary": "Any GitHub user can register an OAuth App immediately under their personal account or any organization they administer (up to 100 apps per owner). Registration is a form; the docs describe no GitHub review or approval step before the app can be authorized by other users.",
-    "claimIds": ["github-oauth-app-repo-access-c1", "github-oauth-app-repo-access-c2", "github-oauth-app-repo-access-c20"]
+    "claimIds": [
+      "github-oauth-app-repo-access-c1",
+      "github-oauth-app-repo-access-c2",
+      "github-oauth-app-repo-access-c20",
+      "github-oauth-app-repo-access-c23"
+    ]
   },
   "scopes": [
     {
       "name": "repo",
       "purpose": "Required to read private repositories and to push branches and open PRs. Broad: full read/write to code, commit statuses, invitations, collaborators, deployment statuses and repo webhooks on every public and private repo the user can reach. An OAuth App cannot request anything narrower for private-repo contents; `public_repo` covers public repos only.",
       "access": "public",
-      "claimIds": ["github-oauth-app-repo-access-c8", "github-oauth-app-repo-access-c11"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c8",
+        "github-oauth-app-repo-access-c11",
+        "github-oauth-app-repo-access-c27"
+      ]
     },
     {
       "name": "read:user",
       "purpose": "Read the user's profile data (login, name, avatar) to identify the signed-in account.",
       "access": "public",
-      "claimIds": ["github-oauth-app-repo-access-c9"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c9"
+      ]
     },
     {
       "name": "user:email",
       "purpose": "Read the user's email addresses (including private ones) for account linking/notifications.",
       "access": "public",
-      "claimIds": ["github-oauth-app-repo-access-c9"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c9"
+      ]
     }
   ],
   "difficulty": {
@@ -49,39 +62,67 @@
   "handsOnEffort": {
     "kind": "estimated",
     "value": "45–90 min",
-    "basis": "Registration form takes minutes; most time goes to implementing the authorization code exchange, refresh-token rotation, and a UX path telling users to request org approval. Longer if you add device flow for a CLI agent.",
-    "claimIds": ["github-oauth-app-repo-access-c7", "github-oauth-app-repo-access-c14"]
+    "basis": "Registration form takes minutes; most time goes to implementing the authorization code exchange, refresh-token rotation, and a UX path telling users to request org approval. Longer if you add device flow for a CLI agent. Firsthand: the agent-driven click path (open form, fill, register, open consent screen) measured about 2 min 42 s in setup-notes/github.md (excludes doc reading, client-secret handling and code), so the estimate is dominated by implementation, not registration.",
+    "claimIds": [
+      "github-oauth-app-repo-access-c7",
+      "github-oauth-app-repo-access-c14",
+      "github-oauth-app-repo-access-c23"
+    ]
   },
   "providerWait": {
     "kind": "unknown",
     "value": "Not published",
     "basis": "No GitHub review exists for OAuth Apps, so there is no provider wait to publish. Org-owner approval under access restrictions is at each org's discretion and has no published SLA.",
-    "claimIds": ["github-oauth-app-repo-access-c2", "github-oauth-app-repo-access-c15"]
+    "claimIds": [
+      "github-oauth-app-repo-access-c2",
+      "github-oauth-app-repo-access-c15"
+    ]
   },
   "reviewStages": [
     {
       "name": "GitHub app review / approval",
       "trigger": "Never for a plain OAuth App: the registration docs end at 'Register application' with no review step.",
       "applies": "never",
-      "wait": { "kind": "unknown", "value": "Not published", "claimIds": [] },
+      "wait": {
+        "kind": "unknown",
+        "value": "Not published",
+        "claimIds": []
+      },
       "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
-      "claimIds": ["github-oauth-app-repo-access-c2"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c2",
+        "github-oauth-app-repo-access-c23"
+      ]
     },
     {
       "name": "Organization owner approval (OAuth app access policy)",
       "trigger": "A user authorizes your app and wants it to touch repos of an org that has OAuth app access restrictions enabled (default for new orgs). Members request; an org owner grants or denies. Per org, not per app globally.",
       "applies": "conditional",
-      "wait": { "kind": "unknown", "value": "Not published", "claimIds": [] },
+      "wait": {
+        "kind": "unknown",
+        "value": "Not published",
+        "claimIds": []
+      },
       "url": "https://docs.github.com/en/organizations/managing-oauth-access-to-your-organizations-data/approving-oauth-apps-for-your-organization",
-      "claimIds": ["github-oauth-app-repo-access-c14", "github-oauth-app-repo-access-c15"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c14",
+        "github-oauth-app-repo-access-c15",
+        "github-oauth-app-repo-access-c28"
+      ]
     },
     {
       "name": "GitHub Marketplace listing verification",
       "trigger": "Only if you choose to list on Marketplace. Free listings need the general requirements; paid plans need an org that is a verified publisher and, for OAuth apps, a minimum of 200 users. Not needed to distribute the app.",
       "applies": "conditional",
-      "wait": { "kind": "unknown", "value": "Not published", "claimIds": [] },
+      "wait": {
+        "kind": "unknown",
+        "value": "Not published",
+        "claimIds": []
+      },
       "url": "https://docs.github.com/en/apps/github-marketplace/creating-apps-for-github-marketplace/requirements-for-listing-an-app",
-      "claimIds": ["github-oauth-app-repo-access-c17"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c17"
+      ]
     }
   ],
   "prerequisites": [
@@ -104,14 +145,28 @@
       "url": "https://github.com/settings/applications/new",
       "owner": "human",
       "ownerNote": "Requires an authenticated GitHub session (and 2FA if enabled on the account).",
-      "claimIds": ["github-oauth-app-repo-access-c1", "github-oauth-app-repo-access-c3"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c1",
+        "github-oauth-app-repo-access-c3",
+        "github-oauth-app-repo-access-c23",
+        "github-oauth-app-repo-access-c25"
+      ]
     },
     {
       "title": "Configure callback URLs, device flow, token expiry",
       "details": "Add every redirect you will use (prod HTTPS, staging, loopback for dev; up to 10). Redirect URI must exactly match a registered callback unless you enable wildcard matching (GitHub warns this adds risk). Loopback redirects may use any port. Tick 'Enable Device Flow' only if your agent runs headless/CLI. 'Expire user access tokens' is on by default; leave it on and implement refresh.",
       "url": "https://github.com/settings/developers",
       "owner": "either",
-      "claimIds": ["github-oauth-app-repo-access-c3", "github-oauth-app-repo-access-c4", "github-oauth-app-repo-access-c5", "github-oauth-app-repo-access-c6", "github-oauth-app-repo-access-c7"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c3",
+        "github-oauth-app-repo-access-c4",
+        "github-oauth-app-repo-access-c5",
+        "github-oauth-app-repo-access-c6",
+        "github-oauth-app-repo-access-c7",
+        "github-oauth-app-repo-access-c24",
+        "github-oauth-app-repo-access-c25",
+        "github-oauth-app-repo-access-c26"
+      ]
     },
     {
       "title": "Generate and store the client secret",
@@ -119,42 +174,62 @@
       "url": "https://github.com/settings/developers",
       "owner": "human",
       "ownerNote": "Secret is displayed once in the browser session; a human must copy it into the secret store.",
-      "claimIds": ["github-oauth-app-repo-access-c19"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c19"
+      ]
     },
     {
       "title": "Implement the web application flow",
       "details": "Redirect to https://github.com/login/oauth/authorize?client_id=…&redirect_uri=…&scope=repo%20read:user%20user:email&state=…. Exchange the returned code at https://github.com/login/oauth/access_token within 10 minutes. Check `expires_in` in the response to know you got an expiring token; persist access + refresh tokens per user.",
       "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps",
       "owner": "agent",
-      "claimIds": ["github-oauth-app-repo-access-c22", "github-oauth-app-repo-access-c7"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c22",
+        "github-oauth-app-repo-access-c7"
+      ]
     },
     {
       "title": "Implement refresh-token rotation",
       "details": "Access tokens expire after 8 hours, refresh tokens after 6 months of non-use. Each refresh invalidates the old access and refresh token, so write the new pair atomically before using it. Scopes are not re-prompted on refresh.",
       "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/refreshing-user-access-tokens",
       "owner": "agent",
-      "claimIds": ["github-oauth-app-repo-access-c7"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c7",
+        "github-oauth-app-repo-access-c26"
+      ]
     },
     {
       "title": "(Optional) Implement device flow for a CLI agent",
       "details": "POST https://github.com/login/device/code with client_id and scope; show user_code + verification_uri; poll https://github.com/login/oauth/access_token with grant_type=urn:ietf:params:oauth:grant-type:device_code honoring `interval` (back off 5s on `slow_down`). Code valid 15 minutes. No client secret needed. 50 code submissions/hour/app limit.",
       "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#device-flow",
       "owner": "agent",
-      "claimIds": ["github-oauth-app-repo-access-c4"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c4"
+      ]
     },
     {
       "title": "Handle reduced scopes and org access restrictions",
       "details": "Users can edit requested scopes on the consent screen, so read the `X-OAuth-Scopes` header and degrade gracefully. If a user's org has OAuth app access restrictions on (default for new orgs), the token cannot see that org's repos until an org owner approves the app; show instructions: Settings → Applications → Authorized OAuth Apps → your app → Request access → Request approval from owners. Org owners approve at Org Settings → Third-party Access → OAuth app policy.",
       "url": "https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-your-membership-in-organizations/requesting-organization-approval-for-oauth-apps",
       "owner": "agent",
-      "claimIds": ["github-oauth-app-repo-access-c10", "github-oauth-app-repo-access-c14", "github-oauth-app-repo-access-c15"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c10",
+        "github-oauth-app-repo-access-c14",
+        "github-oauth-app-repo-access-c15",
+        "github-oauth-app-repo-access-c27",
+        "github-oauth-app-repo-access-c28"
+      ]
     },
     {
       "title": "Test with your own account and budget rate limits",
       "details": "Authorize with your own account; list repos, read issues/PRs, push a branch and open a PR on a scratch repo. Plan for 5,000 requests/hour per user (shared with any other OAuth app/PAT the user uses) and no scaling; use conditional requests and GraphQL batching. Secondary limit: 2,000 token requests/hour per app.",
       "url": "https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api",
       "owner": "either",
-      "claimIds": ["github-oauth-app-repo-access-c12", "github-oauth-app-repo-access-c13", "github-oauth-app-repo-access-c21"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c12",
+        "github-oauth-app-repo-access-c13",
+        "github-oauth-app-repo-access-c21"
+      ]
     },
     {
       "title": "(Optional) Transfer the app to an organization",
@@ -162,7 +237,9 @@
       "url": "https://docs.github.com/en/apps/oauth-apps/maintaining-oauth-apps/transferring-ownership-of-an-oauth-app",
       "owner": "human",
       "ownerNote": "Both sender and recipient must act in the GitHub UI; recipient confirmation is a consent step.",
-      "claimIds": ["github-oauth-app-repo-access-c16"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c16"
+      ]
     },
     {
       "title": "(Optional) List on GitHub Marketplace",
@@ -170,7 +247,9 @@
       "url": "https://docs.github.com/en/apps/github-marketplace/creating-apps-for-github-marketplace/requirements-for-listing-an-app",
       "owner": "human",
       "ownerNote": "Involves accepting the Marketplace Developer Agreement and publisher verification (legal/financial representations).",
-      "claimIds": ["github-oauth-app-repo-access-c17"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c17"
+      ]
     }
   ],
   "testing": {
@@ -185,7 +264,16 @@
       "Device flow is rejected with device_flow_disabled unless enabled in app settings; 50 verification-code submissions/hour/app.",
       "Enterprise managed users: docs confirm they can create OAuth apps and restrict GitHub App installs; their ability to authorize third-party OAuth apps was not explicitly stated on the fetched page."
     ],
-    "claimIds": ["github-oauth-app-repo-access-c4", "github-oauth-app-repo-access-c10", "github-oauth-app-repo-access-c14", "github-oauth-app-repo-access-c18", "github-oauth-app-repo-access-c20"]
+    "claimIds": [
+      "github-oauth-app-repo-access-c4",
+      "github-oauth-app-repo-access-c10",
+      "github-oauth-app-repo-access-c14",
+      "github-oauth-app-repo-access-c18",
+      "github-oauth-app-repo-access-c20",
+      "github-oauth-app-repo-access-c24",
+      "github-oauth-app-repo-access-c28",
+      "github-oauth-app-repo-access-c29"
+    ]
   },
   "launch": {
     "requirements": [
@@ -195,7 +283,14 @@
       "Rate-limit handling (5,000/hour/user, shared; 403/429 backoff).",
       "No GitHub review, verification, or Marketplace listing required to let arbitrary users authorize."
     ],
-    "claimIds": ["github-oauth-app-repo-access-c2", "github-oauth-app-repo-access-c7", "github-oauth-app-repo-access-c12", "github-oauth-app-repo-access-c14", "github-oauth-app-repo-access-c20"]
+    "claimIds": [
+      "github-oauth-app-repo-access-c2",
+      "github-oauth-app-repo-access-c7",
+      "github-oauth-app-repo-access-c12",
+      "github-oauth-app-repo-access-c14",
+      "github-oauth-app-repo-access-c20",
+      "github-oauth-app-repo-access-c23"
+    ]
   },
   "blockers": [
     {
@@ -203,42 +298,62 @@
       "description": "The user's organization has OAuth app access restrictions enabled (default for new orgs). Your app loses access to that org's resources until an owner approves it, even though the user granted `repo`.",
       "recovery": "Have the user request approval (Settings → Applications → Authorized OAuth Apps → app → Request access → Request approval from owners) and an org owner grant it under Org Settings → Third-party Access → OAuth app policy. If the org refuses OAuth apps on policy grounds, offer a GitHub App instead.",
       "escalationUrl": "https://docs.github.com/en/organizations/managing-oauth-access-to-your-organizations-data/approving-oauth-apps-for-your-organization",
-      "claimIds": ["github-oauth-app-repo-access-c14", "github-oauth-app-repo-access-c15"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c14",
+        "github-oauth-app-repo-access-c15",
+        "github-oauth-app-repo-access-c28"
+      ]
     },
     {
       "title": "redirect_uri mismatch",
       "description": "Redirect must exactly match a registered callback URL unless wildcard matching is enabled; the only relaxation is that loopback redirects may use any port.",
       "recovery": "Register each exact URL (up to 10). For local dev use http://127.0.0.1:<any-port>/callback with a registered 127.0.0.1 callback. Avoid wildcard matching unless needed.",
       "escalationUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps",
-      "claimIds": ["github-oauth-app-repo-access-c3", "github-oauth-app-repo-access-c5", "github-oauth-app-repo-access-c6"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c3",
+        "github-oauth-app-repo-access-c5",
+        "github-oauth-app-repo-access-c6",
+        "github-oauth-app-repo-access-c24",
+        "github-oauth-app-repo-access-c25"
+      ]
     },
     {
       "title": "Access token suddenly unauthorized after ~8 hours",
       "description": "New apps issue expiring tokens by default; the access token dies after eight hours and refresh tokens after six months without use. Using a refresh token invalidates the previous pair.",
       "recovery": "Implement refresh before expiry (track `expires_in`), store the new pair atomically, and re-run the auth flow if the refresh token is gone. Do not turn off expiry just to avoid the work.",
       "escalationUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/refreshing-user-access-tokens",
-      "claimIds": ["github-oauth-app-repo-access-c7"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c7",
+        "github-oauth-app-repo-access-c26"
+      ]
     },
     {
       "title": "Rate limit exhaustion for heavy agent loops",
       "description": "OAuth tokens draw on the user's 5,000 req/hour budget shared with every other OAuth app and PAT they use, and OAuth app limits do not scale with repos/users.",
       "recovery": "Use conditional requests (ETag), GraphQL to batch, cache repo metadata, and back off on 403/429 with `x-ratelimit-reset`. If volume is the bottleneck, migrate to a GitHub App whose installation limits scale.",
       "escalationUrl": "https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api",
-      "claimIds": ["github-oauth-app-repo-access-c12", "github-oauth-app-repo-access-c11"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c12",
+        "github-oauth-app-repo-access-c11"
+      ]
     },
     {
       "title": "User granted fewer scopes than requested",
       "description": "On the consent screen users can edit scopes, granting less than you asked for; the token may lack `repo`.",
       "recovery": "Read `X-OAuth-Scopes` on any response, explain which features are disabled, and offer to re-run the authorize URL; the user may still decline.",
       "escalationUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps",
-      "claimIds": ["github-oauth-app-repo-access-c10"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c10"
+      ]
     },
     {
       "title": "Leaked client secret",
       "description": "Client secret is required for the web flow token exchange; if it ships in a public client or leaks it must be rotated.",
       "recovery": "Generate a new secret on the app page, deploy it, then delete the old one. Move public clients to device flow or PKCE.",
       "escalationUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/best-practices-for-creating-an-oauth-app",
-      "claimIds": ["github-oauth-app-repo-access-c19"]
+      "claimIds": [
+        "github-oauth-app-repo-access-c19"
+      ]
     }
   ],
   "nextActions": [
@@ -263,7 +378,7 @@
       "status": "partially_supported",
       "category": "official_doc",
       "sourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
-      "excerpt": "Final documented step is \"Click Register application.\" The page contains no statement about any review or approval process; absence of a documented step, not an explicit 'no review' statement.",
+      "excerpt": "Final documented step is \"Click Register application.\" The page contains no statement about any review or approval process; absence of a documented step, not an explicit 'no review' statement. Firsthand corroboration (2026-10-20): registration completed instantly with no review step; see github-oauth-app-repo-access-c23.",
       "dateChecked": "2026-10-20"
     },
     {
@@ -394,7 +509,7 @@
     },
     {
       "id": "github-oauth-app-repo-access-c17",
-      "text": "Marketplace listing is optional; only org owners can submit listings; paid plans require a verified-publisher org and OAuth apps need at least 200 users; free listings need only the general requirements.",
+      "text": "Marketplace listing is optional; only org owners can submit listings; paid plans require a verified-publisher org and GitHub says OAuth apps \"should\" have at least 200 users (a paid-listing requirement only); free listings need only the general requirements.",
       "status": "supported",
       "category": "official_doc",
       "sourceUrl": "https://docs.github.com/en/apps/github-marketplace/creating-apps-for-github-marketplace/requirements-for-listing-an-app",
@@ -421,10 +536,10 @@
     },
     {
       "id": "github-oauth-app-repo-access-c20",
-      "text": "Immediately after registration any GitHub user can authorize the OAuth App; there is no tester allowlist, user cap, or unverified-app warning for OAuth Apps.",
+      "text": "Immediately after registration the owner could reach the consent screen with no tester allowlist or user cap shown, and the docs list none. There is no Google/Microsoft-style unverified-app block, but the consent screen does show trust signals for new apps (see c29). Authorization by other users was not tested.",
       "status": "unverified",
       "category": "inference",
-      "excerpt": "Inferred from the absence of any review, allowlist or cap in the creating/authorizing docs (c2). No page fetched states this explicitly.",
+      "excerpt": "Inferred from the absence of any review, allowlist or cap in the creating/authorizing docs (c2) plus the firsthand registration (c23, c29). No page fetched states 'no cap' explicitly, and no second user authorized the app.",
       "dateChecked": "2026-10-20"
     },
     {
@@ -444,14 +559,82 @@
       "sourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps",
       "excerpt": "The temporary code will expire after 10 minutes.",
       "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "github-oauth-app-repo-access-c23",
+      "text": "Registering an OAuth App on a personal account completed instantly with no review, approval queue or wait; GitHub issued a Client ID immediately.",
+      "status": "supported",
+      "category": "firsthand_test",
+      "excerpt": "Clicked \"Register application\". GitHub showed \"Application created successfully\" and the Client ID at once; the app page showed \"0 users\". No approval, queue or wait appeared. Required fields were only Application name, Homepage URL and redirect URI (no privacy policy, logo or review form).",
+      "dateChecked": "2026-10-20",
+      "setupAttemptRef": "setup-notes/github.md#attempt-1",
+      "sourceUrl": "https://github.com/settings/applications/new"
+    },
+    {
+      "id": "github-oauth-app-repo-access-c24",
+      "text": "An http://localhost redirect URI was accepted when the OAuth App form was submitted.",
+      "status": "supported",
+      "category": "firsthand_test",
+      "excerpt": "Redirect URI http://localhost:3000/api/auth/callback/github was accepted on submit; the consent screen said \"Authorizing will redirect to http://localhost:3000\".",
+      "dateChecked": "2026-10-20",
+      "setupAttemptRef": "setup-notes/github.md#attempt-1",
+      "sourceUrl": "https://github.com/settings/applications/new"
+    },
+    {
+      "id": "github-oauth-app-repo-access-c25",
+      "text": "The current OAuth App form allows up to 10 redirect URIs, each with an optional \"Allow wildcard matching\" checkbox.",
+      "status": "supported",
+      "category": "firsthand_test",
+      "excerpt": "Form text: \"You may add up to 10 redirect URIs.\" Each redirect URI has an \"Allow wildcard matching\" checkbox whose help text warns it sends tokens to all subdomains and extra paths.",
+      "dateChecked": "2026-10-20",
+      "setupAttemptRef": "setup-notes/github.md#attempt-1",
+      "sourceUrl": "https://github.com/settings/applications/new"
+    },
+    {
+      "id": "github-oauth-app-repo-access-c26",
+      "text": "On the new OAuth App form, \"Expire user access tokens\" is pre-checked and \"Enable Device Flow\" is unchecked by default.",
+      "status": "supported",
+      "category": "firsthand_test",
+      "excerpt": "Defaults observed on the form: \"Expire user access tokens\" pre-checked; \"Enable Device Flow\" unchecked.",
+      "dateChecked": "2026-10-20",
+      "setupAttemptRef": "setup-notes/github.md#attempt-1",
+      "sourceUrl": "https://github.com/settings/applications/new"
+    },
+    {
+      "id": "github-oauth-app-repo-access-c27",
+      "text": "The consent screen for scope `repo` tells the user the app gets \"Repositories: Public and private\".",
+      "status": "supported",
+      "category": "firsthand_test",
+      "excerpt": "Authorize URL with scope=repo read:user user:email showed \"Personal user data: Email addresses (read-only), profile information (read-only)\" and \"Repositories: Public and private\", with \"private\" highlighted. Authorize was not clicked.",
+      "dateChecked": "2026-10-20",
+      "setupAttemptRef": "setup-notes/github.md#attempt-1"
+    },
+    {
+      "id": "github-oauth-app-repo-access-c28",
+      "text": "On the consent screen, an organization the user belongs to appeared under \"Organization access\" with a \"Request\" button, i.e. the app would not reach that org's resources until an org owner approves.",
+      "status": "supported",
+      "category": "firsthand_test",
+      "excerpt": "An organization the user belongs to was listed under \"Organization access\" with an ✕ and a Request button. No request was sent, so the owner's view and approval time were not observed.",
+      "dateChecked": "2026-10-20",
+      "setupAttemptRef": "setup-notes/github.md#attempt-1"
+    },
+    {
+      "id": "github-oauth-app-repo-access-c29",
+      "text": "A brand-new OAuth App's consent screen shows trust signals to the end user: \"Not owned or operated by GitHub\", \"Created less than a day ago\", \"Fewer than 10 GitHub users\".",
+      "status": "supported",
+      "category": "firsthand_test",
+      "excerpt": "Consent screen for the newly created app showed \"Not owned or operated by GitHub\", \"Created less than a day ago\" and \"Fewer than 10 GitHub users\".",
+      "dateChecked": "2026-10-20",
+      "setupAttemptRef": "setup-notes/github.md#attempt-1"
     }
   ],
   "unresolved": [
-    "No page states explicitly 'OAuth Apps are not reviewed'; the conclusion rests on the absence of any review step in the docs.",
+    "No GitHub page states explicitly 'OAuth Apps are not reviewed'; the docs are silent, and one firsthand personal-account registration (c23) showed no review step.",
     "Whether enterprise managed users (EMU) can authorize third-party OAuth Apps at all (vs. only create them) was not stated on the fetched abilities page; enterprise OAuth policy pages were not fetched.",
     "Org-owner approval has no published turnaround; it is per-org and discretionary.",
     "Marketplace free-listing 'general requirements' and listing verification turnaround were not fully enumerated.",
-    "Whether the 'Expire user access tokens' default applies to apps created before the change was not checked."
+    "Whether the 'Expire user access tokens' default applies to apps created before the change was not checked.",
+    "What an org owner sees for an OAuth app access request and how long approval takes: the Request button was observed (c28) but no request was sent."
   ],
   "lastResearched": "2026-10-20",
   "researchLog": [

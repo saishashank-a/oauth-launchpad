@@ -107,3 +107,4 @@ details > summary { cursor: pointer; }
 .prose hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
 
 .grid > * { min-width: 0; }
+table .chip { white-space: nowrap; }

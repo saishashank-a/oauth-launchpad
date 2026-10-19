@@ -1,7 +1,7 @@
 {
   "slug": "microsoft-entra-graph-mail-calendar",
   "schemaVersion": 1,
-  "origin": "generated",
+  "origin": "curated",
   "provider": {
     "name": "Microsoft",
     "website": "https://microsoft.com",
@@ -21,14 +21,53 @@
   "registration": {
     "availability": "public",
     "summary": "Anyone with an Azure account (free tier is fine) and a workforce tenant can register an app in the Entra admin center with at least the Application Developer role. Registration is self-service and instant. Nothing in Microsoft reviews the app before it can be used; the gating happens later, at consent time in each customer tenant, where unverified multi-tenant apps requesting non-basic permissions are stepped up to admin consent by default.",
-    "claimIds": ["microsoft-entra-graph-mail-calendar-c1", "microsoft-entra-graph-mail-calendar-c2"]
+    "claimIds": [
+      "microsoft-entra-graph-mail-calendar-c1",
+      "microsoft-entra-graph-mail-calendar-c2"
+    ]
   },
   "scopes": [
-    { "name": "User.Read", "purpose": "Sign the user in and read their profile (needed to identify the mailbox owner).", "access": "public", "claimIds": ["microsoft-entra-graph-mail-calendar-c9"] },
-    { "name": "Mail.Read", "purpose": "Read the signed-in user's mailbox.", "access": "public", "claimIds": ["microsoft-entra-graph-mail-calendar-c6"] },
-    { "name": "Mail.Send", "purpose": "Send mail as the signed-in user (also saves to Sent Items).", "access": "public", "claimIds": ["microsoft-entra-graph-mail-calendar-c7"] },
-    { "name": "Calendars.ReadWrite", "purpose": "Create, read, update and delete events in the user's calendars.", "access": "public", "claimIds": ["microsoft-entra-graph-mail-calendar-c8"] },
-    { "name": "offline_access", "purpose": "Receive a refresh token so the assistant can act without the user present.", "access": "public", "claimIds": ["microsoft-entra-graph-mail-calendar-c10", "microsoft-entra-graph-mail-calendar-c27"] }
+    {
+      "name": "User.Read",
+      "purpose": "Sign the user in and read their profile (needed to identify the mailbox owner).",
+      "access": "public",
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c9"
+      ]
+    },
+    {
+      "name": "Mail.Read",
+      "purpose": "Read the signed-in user's mailbox.",
+      "access": "public",
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c6"
+      ]
+    },
+    {
+      "name": "Mail.Send",
+      "purpose": "Send mail as the signed-in user (also saves to Sent Items).",
+      "access": "public",
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c7"
+      ]
+    },
+    {
+      "name": "Calendars.ReadWrite",
+      "purpose": "Create, read, update and delete events in the user's calendars.",
+      "access": "public",
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c8"
+      ]
+    },
+    {
+      "name": "offline_access",
+      "purpose": "Receive a refresh token so the assistant can act without the user present.",
+      "access": "public",
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c10",
+        "microsoft-entra-graph-mail-calendar-c27"
+      ]
+    }
   ],
   "difficulty": {
     "level": "medium",
@@ -38,54 +77,101 @@
     "kind": "estimated",
     "value": "45–90 min for registration + working OAuth flow; plus 1–3 h for publisher domain + Partner Center enrollment and publisher verification (excluding any Partner Center vetting wait)",
     "basis": "App registration, redirect URIs, secret and API permissions are a few portal clicks; auth-code+PKCE with /common and Graph /me/messages is standard. Publisher verification adds hosting a .well-known JSON file, Partner Center enrollment and MFA sign-in.",
-    "claimIds": ["microsoft-entra-graph-mail-calendar-c1", "microsoft-entra-graph-mail-calendar-c14"]
+    "claimIds": [
+      "microsoft-entra-graph-mail-calendar-c1",
+      "microsoft-entra-graph-mail-calendar-c14"
+    ]
   },
   "providerWait": {
     "kind": "documented",
     "value": "Publisher verification: 'verified in minutes' once prerequisites are met; the request 'may take a few minutes'. Partner Center account vetting: not published.",
     "basis": "Microsoft publishes the verification wait but not the Partner Center legal/business verification duration.",
-    "claimIds": ["microsoft-entra-graph-mail-calendar-c15", "microsoft-entra-graph-mail-calendar-c16"]
+    "claimIds": [
+      "microsoft-entra-graph-mail-calendar-c15",
+      "microsoft-entra-graph-mail-calendar-c16"
+    ]
   },
   "reviewStages": [
     {
       "name": "Microsoft app review before use",
       "trigger": "None. App registrations are usable immediately; Microsoft does not review apps before they can request consent.",
       "applies": "never",
-      "wait": { "kind": "unknown", "value": "Not applicable", "claimIds": [] },
+      "wait": {
+        "kind": "unknown",
+        "value": "Not applicable",
+        "claimIds": []
+      },
       "url": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c1"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c1"
+      ]
     },
     {
       "name": "Publisher verification (Partner One ID on the app)",
       "trigger": "Needed in practice for any multi-tenant app registered after 8 Nov 2020 that requests more than basic sign-in from users in other tenants; without it, risk-based step-up consent (enabled by default) blocks user consent and requires admin consent. Requires a verified Microsoft AI Cloud Partner Program account.",
       "applies": "conditional",
-      "wait": { "kind": "documented", "value": "Minutes (once prerequisites met)", "basis": "'Developers who have already met these requirements can be verified in minutes.'", "claimIds": ["microsoft-entra-graph-mail-calendar-c15", "microsoft-entra-graph-mail-calendar-c16"] },
+      "wait": {
+        "kind": "documented",
+        "value": "Minutes (once prerequisites met)",
+        "basis": "'Developers who have already met these requirements can be verified in minutes.'",
+        "claimIds": [
+          "microsoft-entra-graph-mail-calendar-c15",
+          "microsoft-entra-graph-mail-calendar-c16"
+        ]
+      },
       "url": "https://learn.microsoft.com/en-us/entra/identity-platform/mark-app-as-publisher-verified",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c12", "microsoft-entra-graph-mail-calendar-c13", "microsoft-entra-graph-mail-calendar-c14"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c12",
+        "microsoft-entra-graph-mail-calendar-c13",
+        "microsoft-entra-graph-mail-calendar-c14"
+      ]
     },
     {
       "name": "Customer tenant admin consent",
       "trigger": "Per customer organization, whenever that tenant disables user consent, limits it to verified publishers / low-impact permissions, or step-up consent flags your app. The admin either approves via the admin consent workflow request or you send them to the /adminconsent endpoint.",
       "applies": "conditional",
-      "wait": { "kind": "unknown", "value": "Not published (depends on each customer's admin)", "claimIds": [] },
+      "wait": {
+        "kind": "unknown",
+        "value": "Not published (depends on each customer's admin)",
+        "claimIds": []
+      },
       "url": "https://learn.microsoft.com/en-us/entra/identity-platform/v2-admin-consent",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c11", "microsoft-entra-graph-mail-calendar-c19", "microsoft-entra-graph-mail-calendar-c21"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c11",
+        "microsoft-entra-graph-mail-calendar-c19",
+        "microsoft-entra-graph-mail-calendar-c21"
+      ]
     },
     {
       "name": "Microsoft 365 Publisher Attestation (optional)",
       "trigger": "Optional self-assessment in Partner Center to publish a security/compliance page; not required for OAuth consent. Required only for Teams store apps.",
       "applies": "conditional",
-      "wait": { "kind": "documented", "value": "Most attestations completed in one hour or less (developer side); valid one year", "basis": "Published on the attestation overview page.", "claimIds": ["microsoft-entra-graph-mail-calendar-c23"] },
+      "wait": {
+        "kind": "documented",
+        "value": "Most attestations completed in one hour or less (developer side); valid one year",
+        "basis": "Published on the attestation overview page.",
+        "claimIds": [
+          "microsoft-entra-graph-mail-calendar-c23"
+        ]
+      },
       "url": "https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/attestation",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c23"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c23"
+      ]
     },
     {
       "name": "Microsoft 365 App Certification (optional)",
       "trigger": "Optional independent security audit; only pursue if enterprise customers demand the certification badge. Requires Publisher Attestation first and annual recertification.",
       "applies": "conditional",
-      "wait": { "kind": "unknown", "value": "Not published", "claimIds": [] },
+      "wait": {
+        "kind": "unknown",
+        "value": "Not published",
+        "claimIds": []
+      },
       "url": "https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/certification",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c24"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c24"
+      ]
     }
   ],
   "prerequisites": [
@@ -109,49 +195,74 @@
       "url": "https://entra.microsoft.com",
       "owner": "human",
       "ownerNote": "Interactive Microsoft login, possibly MFA.",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c1"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c1"
+      ]
     },
     {
       "title": "Register the app with multi-tenant + personal accounts audience",
       "details": "Entra ID > App registrations > New registration. Under Supported account types pick 'Any Entra ID Tenant + Personal Microsoft accounts' (signInAudience AzureADandPersonalMicrosoftAccount). Record the Application (client) ID. Note this audience caps you at 100 redirect URIs, forbids query strings in redirect URIs and limits you to two client secrets.",
       "url": "https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/CreateApplicationBlade",
       "owner": "either",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c2", "microsoft-entra-graph-mail-calendar-c4", "microsoft-entra-graph-mail-calendar-c26"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c2",
+        "microsoft-entra-graph-mail-calendar-c4",
+        "microsoft-entra-graph-mail-calendar-c26"
+      ]
     },
     {
       "title": "Add redirect URIs (Web platform)",
       "details": "Authentication > Add a platform > Web. Add your https production callback and http://localhost/<path> for development (http is only allowed for localhost; https://127.0.0.1 is preferred; http://127.0.0.1 can only be added via the manifest). Redirect URIs are case-sensitive and must match exactly. Multi-tenant apps without a publisher domain are restricted to a single root domain across redirect URIs.",
       "url": "https://learn.microsoft.com/en-us/entra/identity-platform/reply-url",
       "owner": "either",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c3", "microsoft-entra-graph-mail-calendar-c4", "microsoft-entra-graph-mail-calendar-c28"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c3",
+        "microsoft-entra-graph-mail-calendar-c4",
+        "microsoft-entra-graph-mail-calendar-c28"
+      ]
     },
     {
       "title": "Create a client secret or upload a certificate",
       "details": "Certificates & secrets > New client secret. Store it server-side only. Microsoft recommends certificate credentials for confidential clients. Personal-account-capable registrations allow at most two client secrets.",
       "url": "https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow",
       "owner": "either",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c26", "microsoft-entra-graph-mail-calendar-c27"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c26",
+        "microsoft-entra-graph-mail-calendar-c27"
+      ]
     },
     {
       "title": "Add delegated Graph permissions",
       "details": "API permissions > Add a permission > Microsoft Graph > Delegated: User.Read (pre-added), Mail.Read, Mail.Send, Calendars.ReadWrite, offline_access. All five are AdminConsentRequired = No and available for personal Microsoft accounts. Do NOT add Application permissions; those require admin consent everywhere and are app-only. Listing scopes here matters for the /adminconsent and .default flows.",
       "url": "https://learn.microsoft.com/en-us/graph/permissions-reference",
       "owner": "either",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c5", "microsoft-entra-graph-mail-calendar-c6", "microsoft-entra-graph-mail-calendar-c7", "microsoft-entra-graph-mail-calendar-c8", "microsoft-entra-graph-mail-calendar-c9", "microsoft-entra-graph-mail-calendar-c10"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c5",
+        "microsoft-entra-graph-mail-calendar-c6",
+        "microsoft-entra-graph-mail-calendar-c7",
+        "microsoft-entra-graph-mail-calendar-c8",
+        "microsoft-entra-graph-mail-calendar-c9",
+        "microsoft-entra-graph-mail-calendar-c10"
+      ]
     },
     {
       "title": "Implement auth code + PKCE against /common",
       "details": "Authorize at https://login.microsoftonline.com/common/oauth2/v2.0/authorize with scope='openid profile offline_access User.Read Mail.Read Mail.Send Calendars.ReadWrite', code_challenge S256. Use /common so both work/school and personal accounts can sign in (/organizations or /consumers to restrict). Redeem at /common/oauth2/v2.0/token; a refresh_token is only returned if offline_access was requested. Call GET https://graph.microsoft.com/v1.0/me/messages and /me/events with the bearer token.",
       "url": "https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow",
       "owner": "agent",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c27", "microsoft-entra-graph-mail-calendar-c10"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c27",
+        "microsoft-entra-graph-mail-calendar-c10"
+      ]
     },
     {
       "title": "Handle token lifetimes and refresh",
       "details": "Access tokens last 60–90 minutes by default; refresh tokens expire after 90 days of inactivity and are otherwise until-revoked (not configurable since Jan 2021). Always replace the stored refresh token with the one returned on refresh. Token-lifetime policies cannot be applied to personal-account-capable apps.",
       "url": "https://learn.microsoft.com/en-us/entra/identity-platform/configurable-token-lifetimes",
       "owner": "agent",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c22"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c22"
+      ]
     },
     {
       "title": "Set branding, publisher domain, ToS and privacy URLs",
@@ -159,7 +270,11 @@
       "url": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-configure-publisher-domain",
       "owner": "either",
       "ownerNote": "Hosting the JSON file is automatable; the portal click is not available via API.",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c14", "microsoft-entra-graph-mail-calendar-c18", "microsoft-entra-graph-mail-calendar-c28"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c14",
+        "microsoft-entra-graph-mail-calendar-c18",
+        "microsoft-entra-graph-mail-calendar-c28"
+      ]
     },
     {
       "title": "Enroll in the Microsoft AI Cloud Partner Program and complete vetting",
@@ -167,7 +282,10 @@
       "url": "https://partner.microsoft.com/dashboard/account/v3/enrollment/joinnow/basicpartnernetwork/new",
       "owner": "human",
       "ownerNote": "Legal entity attestation, business documents and account ownership; cannot be delegated to an agent.",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c14", "microsoft-entra-graph-mail-calendar-c15"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c14",
+        "microsoft-entra-graph-mail-calendar-c15"
+      ]
     },
     {
       "title": "Mark the app as publisher verified",
@@ -175,14 +293,22 @@
       "url": "https://learn.microsoft.com/en-us/entra/identity-platform/mark-app-as-publisher-verified",
       "owner": "human",
       "ownerNote": "Requires MFA in the same session and privileged roles in two systems.",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c14", "microsoft-entra-graph-mail-calendar-c16", "microsoft-entra-graph-mail-calendar-c17"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c14",
+        "microsoft-entra-graph-mail-calendar-c16",
+        "microsoft-entra-graph-mail-calendar-c17"
+      ]
     },
     {
       "title": "Build an admin-consent path for organizations",
       "details": "For customer tenants that block user consent, provide a 'Connect your organization' button that sends an admin to https://login.microsoftonline.com/{tenantId or organizations}/v2.0/adminconsent?client_id=...&scope=...&redirect_uri=...&state=... (never 'common'). Handle admin_consent=True and error=consent_required on return. Also tell users that if they see 'Approval required', their admin may have the admin consent workflow enabled and they can submit a request from the prompt.",
       "url": "https://learn.microsoft.com/en-us/entra/identity-platform/v2-admin-consent",
       "owner": "agent",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c21", "microsoft-entra-graph-mail-calendar-c19", "microsoft-entra-graph-mail-calendar-c20"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c21",
+        "microsoft-entra-graph-mail-calendar-c19",
+        "microsoft-entra-graph-mail-calendar-c20"
+      ]
     },
     {
       "title": "(Optional) Publisher Attestation in Partner Center",
@@ -190,7 +316,9 @@
       "url": "https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/attestation",
       "owner": "human",
       "ownerNote": "Attestation is a representation about security practices.",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c23"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c23"
+      ]
     }
   ],
   "testing": {
@@ -206,7 +334,12 @@
       "Publisher verification cannot be done from an app registered with a personal Microsoft account, in B2C tenants, or in national clouds.",
       "No published rate-limit or user-count caps tied to verification status were found."
     ],
-    "claimIds": ["microsoft-entra-graph-mail-calendar-c11", "microsoft-entra-graph-mail-calendar-c12", "microsoft-entra-graph-mail-calendar-c17", "microsoft-entra-graph-mail-calendar-c6"]
+    "claimIds": [
+      "microsoft-entra-graph-mail-calendar-c11",
+      "microsoft-entra-graph-mail-calendar-c12",
+      "microsoft-entra-graph-mail-calendar-c17",
+      "microsoft-entra-graph-mail-calendar-c6"
+    ]
   },
   "launch": {
     "requirements": [
@@ -216,7 +349,12 @@
       "Refresh-token rotation and 90-day-inactivity re-auth handling in place.",
       "Optionally Publisher Attestation for enterprise procurement."
     ],
-    "claimIds": ["microsoft-entra-graph-mail-calendar-c13", "microsoft-entra-graph-mail-calendar-c14", "microsoft-entra-graph-mail-calendar-c21", "microsoft-entra-graph-mail-calendar-c22"]
+    "claimIds": [
+      "microsoft-entra-graph-mail-calendar-c13",
+      "microsoft-entra-graph-mail-calendar-c14",
+      "microsoft-entra-graph-mail-calendar-c21",
+      "microsoft-entra-graph-mail-calendar-c22"
+    ]
   },
   "blockers": [
     {
@@ -224,35 +362,50 @@
       "description": "Risk-based step-up consent (default on) treats a newly registered, unverified multi-tenant app requesting non-basic permissions as risky and requires admin consent; if the tenant has no admin consent workflow the user sees AADSTS90094.",
       "recovery": "Complete publisher verification. Meanwhile, route the org's admin to the /adminconsent endpoint or have the user submit an admin consent request from the prompt.",
       "escalationUrl": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-risk-based-step-up-consent",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c12", "microsoft-entra-graph-mail-calendar-c20", "microsoft-entra-graph-mail-calendar-c21"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c12",
+        "microsoft-entra-graph-mail-calendar-c20",
+        "microsoft-entra-graph-mail-calendar-c21"
+      ]
     },
     {
       "title": "Publisher verification rejected (MPNAccountNotVetted, PublisherDomainMismatch, MPNGlobalAccountNotFound, InteractionRequired)",
       "description": "Partner Center account not yet vetted, a location (not global) Partner ID used, publisher domain not matching the Partner Center contact email domain, or MFA not performed in-session.",
       "recovery": "Fix the specific error per the troubleshooting page: use the PartnerGlobal ID, finish Partner Center verification until 'authorized', verify the matching domain under Branding, and sign in with MFA enforced. Risky-request rejections ('UnableToAddPublisher') can be retried the next day.",
       "escalationUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/troubleshoot-publisher-verification",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c14", "microsoft-entra-graph-mail-calendar-c29"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c14",
+        "microsoft-entra-graph-mail-calendar-c29"
+      ]
     },
     {
       "title": "AADSTS50011 redirect URI mismatch",
       "description": "Redirect URI in the request does not exactly (case-sensitively) match a registered one; query strings are not allowed for personal-account-capable apps; wildcards unsupported.",
       "recovery": "Register the exact URI; use the state parameter instead of per-subdomain URIs; for localhost, vary the path not the port.",
       "escalationUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/reply-url",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c3", "microsoft-entra-graph-mail-calendar-c4"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c3",
+        "microsoft-entra-graph-mail-calendar-c4"
+      ]
     },
     {
       "title": "Customer tenant disables user consent entirely or restricts to verified publishers + low-impact permissions",
       "description": "Even a verified publisher cannot get user consent for Mail.Send / Calendars.ReadWrite in a tenant that limits user consent to permissions the admin classified as low impact, or that disabled user consent.",
       "recovery": "Provide the admin-consent flow; ask the admin to grant tenant-wide consent from Enterprise apps or via /adminconsent.",
       "escalationUrl": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/user-admin-consent-overview",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c11", "microsoft-entra-graph-mail-calendar-c21"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c11",
+        "microsoft-entra-graph-mail-calendar-c21"
+      ]
     },
     {
       "title": "Customer network enforces tenant restrictions",
       "description": "An organization can use tenant restrictions to block its users from signing in with external (including personal) accounts to external apps from managed networks/devices; your assistant may be unreachable for those identities.",
       "recovery": "Nothing on the app side; the customer's admin must allow the tenant/app in their tenant restrictions policy.",
       "escalationUrl": "https://learn.microsoft.com/en-us/entra/external-id/tenant-restrictions-v2",
-      "claimIds": ["microsoft-entra-graph-mail-calendar-c25"]
+      "claimIds": [
+        "microsoft-entra-graph-mail-calendar-c25"
+      ]
     }
   ],
   "nextActions": [
@@ -262,37 +415,284 @@
     "Implement the /adminconsent path and an admin-facing explainer page before onboarding any organization."
   ],
   "claims": [
-    { "id": "microsoft-entra-graph-mail-calendar-c1", "text": "App registration requires an Azure account (free account available), a workforce or external tenant, and at least the Application Developer role; it is self-service.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app", "excerpt": "An Azure account that has an active subscription. Create an account for free. ... The Azure account must be at least an Application Developer. ... A workforce or external tenant. You can use your Default Directory for this quickstart.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c2", "text": "Supported account types include a multitenant + personal Microsoft accounts option.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app", "excerpt": "Any Entra ID Tenant + Personal Microsoft accounts | For multitenant apps that support both organizational and personal Microsoft accounts (for example, Skype, Xbox, Live, Hotmail).", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c3", "text": "Redirect URIs must be https except localhost; http is allowed only for localhost; they are case-sensitive; localhost port is ignored for matching.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/reply-url", "excerpt": "Redirect URIs must begin with the scheme https, with exceptions for some localhost redirect URIs. Redirect URIs are case-sensitive ... The HTTP scheme (http://) is supported only for localhost URIs ... the port component (for example, :5001 or :443) is ignored for the purposes of matching a localhost redirect URI.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c4", "text": "Apps signing in personal Microsoft accounts are limited to 100 redirect URIs, cannot use query parameters in redirect URIs, and cannot use wildcard redirect URIs.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/reply-url", "excerpt": "Personal Microsoft accounts and work and school accounts | 100 | signInAudience ... is set to AzureADandPersonalMicrosoftAccount ... Query parameters are not allowed in redirect URIs for any app registration configured to sign in users with personal Microsoft accounts", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c5", "text": "Delegated permissions act on behalf of a signed-in user and can be consented by users; application permissions are app-only and only admins can consent.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/permissions-consent-overview", "excerpt": "Delegated permissions are used in the delegated access scenario. They're permissions that allow the application to act on a user's behalf. ... Who can consent | - Users can consent for their data - Admins can consent for all users | Only admin can consent", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c6", "text": "Mail.Read delegated does not require admin consent and is available to personal Microsoft accounts.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/graph/permissions-reference", "excerpt": "Mail.Read ... DisplayText: Read user mail ... Description: Allows the app to read the signed-in user's mailbox. ... AdminConsentRequired: No ... The Mail.Read delegated permission is available for consent in personal Microsoft accounts.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c7", "text": "Mail.Send delegated does not require admin consent and is available to personal Microsoft accounts.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/graph/permissions-reference", "excerpt": "Mail.Send ... DisplayText: Send mail as a user ... AdminConsentRequired: No ... The Mail.Send delegated permission is available for consent in personal Microsoft accounts. ... an app can send mail and save a copy to the user's Sent Items folder", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c8", "text": "Calendars.ReadWrite delegated does not require admin consent and is available to personal Microsoft accounts.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/graph/permissions-reference", "excerpt": "Calendars.ReadWrite ... DisplayText | Have full access to user calendars ... Allows the app to create, read, update, and delete events in user calendars. | AdminConsentRequired | No ... The Calendars.ReadWrite delegated permission is available for consent in personal Microsoft accounts.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c9", "text": "User.Read delegated does not require admin consent and is available to personal Microsoft accounts.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/graph/permissions-reference", "excerpt": "User.Read ... DisplayText | - | Sign in and read user profile ... AdminConsentRequired | - | No ... The User.Read delegated permission is available for consent in personal Microsoft accounts.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c10", "text": "offline_access must be explicitly requested on the v2.0 endpoint to receive a refresh token; refresh tokens are typically valid 90 days; access tokens about one hour.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/scopes-oidc", "excerpt": "your app must explicitly request the offline_access scope, to receive refresh tokens. ... The access token is valid for around one hour. ... The refresh token has a longer expiry than the access token and is typically valid for 90 days.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c11", "text": "Tenant admins choose among three built-in user-consent settings: disable user consent; allow only verified publishers/own-tenant apps for low-impact permissions; or allow users to consent to all apps for permissions not requiring admin consent.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/user-admin-consent-overview", "excerpt": "You can disable user consent. ... Users can consent to applications from verified publishers or your organization, but only for permissions you select. ... Users can consent to all applications. This option allows all users to consent to any permissions that don't require admin consent, for any application.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c12", "text": "Risk-based step-up consent is enabled by default and forces admin consent for newly registered, non-publisher-verified multitenant apps requesting non-basic permissions.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-risk-based-step-up-consent", "excerpt": "consent requests for newly registered multitenant apps that aren't publisher verified and require nonbasic permissions are considered risky. If a risky user consent request is detected, the request requires a \"step-up\" to admin consent instead. This step-up capability is enabled by default", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c13", "text": "Since November 2020, users cannot consent to most newly registered multitenant apps that are not publisher verified when they request more than basic sign-in/profile from users in other tenants.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview", "excerpt": "Beginning November 2020, if risk-based step-up consent is enabled, users can't consent to most newly registered multitenant apps that aren't publisher verified. The policy applies to apps that were registered after November 8, 2020, which use OAuth 2.0 to request permissions that extend beyond the basic sign-in and read user profile", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c14", "text": "Publisher verification requires a verified Microsoft AI Cloud Partner Program Partner Global Account (Partner One ID), a non-onmicrosoft.com publisher domain matching the CPP email domain, an app registered with a work account, MFA, and admin roles in both Entra and Partner Center.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview", "excerpt": "The developer must have a Partner One ID for a valid Microsoft AI Cloud Partner Program account that has completed the verification process. ... the app's publisher domain can't be *.onmicrosoft.com ... The user who initiates verification must sign in by using Microsoft Entra multifactor authentication.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c15", "text": "Publisher verification is free and completes in minutes once prerequisites are met.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview", "excerpt": "Developers who have already met these requirements can be verified in minutes. No charges are associated with completing the prerequisites for publisher verification.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c16", "text": "The 'Verify and save' publisher verification request is processed automatically and may take a few minutes; the badge then propagates with some delay.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/mark-app-as-publisher-verified", "excerpt": "Select Verify and save. Wait for the request to process, this may take a few minutes. ... Users who get prompted to consent to your app start seeing the badge soon after you've gone through the process successfully, although it may take some time for updates to replicate", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c17", "text": "The consent prompt shows 'Unverified' in place of the publisher name for apps that are not publisher verified.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/application-consent-experience", "excerpt": "If the app is publisher verified, the publisher name is displayed. If the app isn't publisher verified, \"Unverified\" is displayed instead of a publisher name.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c18", "text": "For multitenant apps registered after November 30, 2020 only publisher verification status is shown on the consent prompt; a publisher domain alone no longer removes 'unverified'.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-configure-publisher-domain", "excerpt": "If your multitenant was registered after November 30, 2020: If the app isn't publisher verified, the consent prompt for the app shows unverified. No publisher domain-related information appears. If the app is publisher verified, the app consent prompt shows a blue verified badge.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c19", "text": "The admin consent workflow (enabled by a Global Administrator per tenant) shows users an 'Approval required' window to request admin approval; reviewers are emailed and the user is notified of the decision.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/user-admin-consent-overview", "excerpt": "When the admin consent workflow is enabled, users are presented with an \"Approval required\" window for requesting admin approval for access to the application. After users submit the admin consent request, the admins who are designated as reviewers receive a notification.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c20", "text": "If a risky consent is detected and the tenant has no admin consent workflow, users see error AADSTS90094 telling them to ask an admin.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-risk-based-step-up-consent", "excerpt": "AADSTS90094: <clientAppDisplayName> needs permission to access resources in your organization that only an admin can grant. Request an admin to grant permission to this app before you can use it.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c21", "text": "Developers can send a tenant admin to the /v2.0/adminconsent endpoint to grant tenant-wide consent; 'common' must not be used because personal accounts cannot grant admin consent.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/v2-admin-consent", "excerpt": "https://login.microsoftonline.com/{tenant}/v2.0/adminconsent ?client_id=... &scope=... &redirect_uri=... &state=12345 ... Do not use 'common', as personal accounts cannot provide admin consent except in the context of a tenant.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c22", "text": "Default access token lifetime is a random 60–90 minutes; refresh token max inactive time is 90 days and max age until-revoked (no longer configurable); token lifetime policies are unsupported for personal-account apps.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/configurable-token-lifetimes", "excerpt": "an access token's default lifetime is assigned a random value ranging between 60-90 minutes (75 minutes on average). ... Refresh Token Max Inactive Time | MaxInactiveTime | 90 days ... Token lifetime policies aren't supported for applications developed for personal Microsoft accounts", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c23", "text": "Publisher Attestation is an optional self-assessment in Partner Center, not independently verified by Microsoft, usually completed in an hour or less, valid one year.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/attestation", "excerpt": "It is a self-assessment where the app developer answers questions ... Most attestations can be completed in one hour or less ... Microsoft does not independently verify the information submitted. ... Approved attestations remain valid for one year from the submission date", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c24", "text": "Microsoft 365 Certification is an independent security/privacy audit requiring substantial effort and annual recertification; no processing time is published.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/certification", "excerpt": "The Microsoft 365 Certification is an independent security and privacy audit of apps ... requires a substantial time and resource commitment to complete. ... Microsoft 365 Certified apps must undergo annual recertification", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c25", "text": "Tenant restrictions let an organization block its users from using external accounts to access external apps from its networks/devices.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/external-id/tenant-restrictions-v2", "excerpt": "you can limit what your users can access when they use an external account to sign in from your networks or devices. The tenant restrictions settings, included with cross-tenant access settings, let you create a policy to control access to external apps.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c26", "text": "Personal-account-capable registrations are limited to two client secrets and at most 30 permissions per resource / 200 total.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/supported-accounts-validation", "excerpt": "Client secrets (passwordCredentials) | No limit* | No limit* | Maximum of two client secrets ... No more than 200 permissions total across all APIs. Maximum of 30 permissions per resource (for example, Microsoft Graph).", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c27", "text": "The auth code flow uses /common, /organizations, /consumers or a tenant ID; PKCE is recommended for all clients; refresh_token is returned only if offline_access was requested.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow", "excerpt": "Valid values are common, organizations, consumers, and tenant identifiers. ... This parameter is now recommended for all application types, both public and confidential clients ... refresh_token ... Note: Only provided if offline_access scope was requested.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c28", "text": "A multitenant app with a null publisher domain may only use redirect URIs sharing a single root domain (localhost exempt).", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-configure-publisher-domain", "excerpt": "When the publisher domain value for a multitenant app is set to null, the app is restricted to sharing a single root domain for the redirect URIs. ... The following cases aren't subject to the single root domain restriction: ... Use of localhost as redirect URIs.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c29", "text": "Common publisher-verification failures include unvetted Partner account, location (not global) Partner ID, publisher domain mismatch, and MFA not performed in-session; 'risky' rejections can be retried next day.", "status": "supported", "category": "official_doc", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/troubleshoot-publisher-verification", "excerpt": "MPNAccountNotVetted ... hasn't completed the vetting process ... PublisherDomainMismatch ... MFA must be performed in the same session when attempting to add a verified publisher. ... try resubmitting the verification request the next day.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c30", "text": "The default user-consent setting for a newly created Entra tenant is 'Allow user consent for apps' (the legacy, most permissive option).", "status": "unverified", "category": "inference", "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent", "excerpt": "The configure-user-consent page lists the options but no fetched page states which option is the tenant default. From memory only.", "dateChecked": "2026-10-20" },
-    { "id": "microsoft-entra-graph-mail-calendar-c31", "text": "Partner Center (Microsoft AI Cloud Partner Program) business verification duration is not published by Microsoft.", "status": "unverified", "category": "inference", "excerpt": "No fetched Microsoft page states a processing time for Partner Center legal/business verification; community reports vary from days to weeks and were not consulted as evidence.", "dateChecked": "2026-10-20" }
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c1",
+      "text": "App registration requires an Azure account (free account available), a workforce or external tenant, and at least the Application Developer role; it is self-service.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app",
+      "excerpt": "An Azure account that has an active subscription. Create an account for free. ... The Azure account must be at least an Application Developer. ... A workforce or external tenant. You can use your Default Directory for this quickstart.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c2",
+      "text": "Supported account types include a multitenant + personal Microsoft accounts option.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app",
+      "excerpt": "Any Entra ID Tenant + Personal Microsoft accounts | For multitenant apps that support both organizational and personal Microsoft accounts (for example, Skype, Xbox, Live, Hotmail).",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c3",
+      "text": "Redirect URIs must be https except localhost; http is allowed only for localhost; they are case-sensitive; localhost port is ignored for matching.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/reply-url",
+      "excerpt": "Redirect URIs must begin with the scheme https, with exceptions for some localhost redirect URIs. Redirect URIs are case-sensitive ... The HTTP scheme (http://) is supported only for localhost URIs ... the port component (for example, :5001 or :443) is ignored for the purposes of matching a localhost redirect URI.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c4",
+      "text": "Apps signing in personal Microsoft accounts are limited to 100 redirect URIs, cannot use query parameters in redirect URIs, and cannot use wildcard redirect URIs.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/reply-url",
+      "excerpt": "Personal Microsoft accounts and work and school accounts | 100 | signInAudience ... is set to AzureADandPersonalMicrosoftAccount ... Query parameters are not allowed in redirect URIs for any app registration configured to sign in users with personal Microsoft accounts",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c5",
+      "text": "Delegated permissions act on behalf of a signed-in user and can be consented by users; application permissions are app-only and only admins can consent.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/permissions-consent-overview",
+      "excerpt": "Delegated permissions are used in the delegated access scenario. They're permissions that allow the application to act on a user's behalf. ... Who can consent | - Users can consent for their data - Admins can consent for all users | Only admin can consent",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c6",
+      "text": "Mail.Read delegated does not require admin consent and is available to personal Microsoft accounts.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/graph/permissions-reference",
+      "excerpt": "Mail.Read ... DisplayText: Read user mail ... Description: Allows the app to read the signed-in user's mailbox. ... AdminConsentRequired: No ... The Mail.Read delegated permission is available for consent in personal Microsoft accounts.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c7",
+      "text": "Mail.Send delegated does not require admin consent and is available to personal Microsoft accounts.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/graph/permissions-reference",
+      "excerpt": "Mail.Send ... DisplayText: Send mail as a user ... AdminConsentRequired: No ... The Mail.Send delegated permission is available for consent in personal Microsoft accounts. ... an app can send mail and save a copy to the user's Sent Items folder",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c8",
+      "text": "Calendars.ReadWrite delegated does not require admin consent and is available to personal Microsoft accounts.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/graph/permissions-reference",
+      "excerpt": "Calendars.ReadWrite ... DisplayText | Have full access to user calendars ... Allows the app to create, read, update, and delete events in user calendars. | AdminConsentRequired | No ... The Calendars.ReadWrite delegated permission is available for consent in personal Microsoft accounts.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c9",
+      "text": "User.Read delegated does not require admin consent and is available to personal Microsoft accounts.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/graph/permissions-reference",
+      "excerpt": "User.Read ... DisplayText | - | Sign in and read user profile ... AdminConsentRequired | - | No ... The User.Read delegated permission is available for consent in personal Microsoft accounts.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c10",
+      "text": "offline_access must be explicitly requested on the v2.0 endpoint to receive a refresh token; refresh tokens are typically valid 90 days; access tokens about one hour.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/scopes-oidc",
+      "excerpt": "your app must explicitly request the offline_access scope, to receive refresh tokens. ... The access token is valid for around one hour. ... The refresh token has a longer expiry than the access token and is typically valid for 90 days.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c11",
+      "text": "Tenant admins choose among three built-in user-consent settings: disable user consent; allow only verified publishers/own-tenant apps for low-impact permissions; or allow users to consent to all apps for permissions not requiring admin consent.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/user-admin-consent-overview",
+      "excerpt": "You can disable user consent. ... Users can consent to applications from verified publishers or your organization, but only for permissions you select. ... Users can consent to all applications. This option allows all users to consent to any permissions that don't require admin consent, for any application.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c12",
+      "text": "Risk-based step-up consent is enabled by default and steps risky user consent requests up to admin consent; Microsoft's example of risky is a newly registered, non-publisher-verified multitenant app requesting non-basic permissions. It only changes behavior where user consent is enabled.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-risk-based-step-up-consent",
+      "excerpt": "For example, consent requests for newly registered multitenant apps that aren't publisher verified and require nonbasic permissions are considered risky. If a risky user consent request is detected, the request requires a \"step-up\" to admin consent instead. This step-up capability is enabled by default, but it results in a behavior change only when user consent is enabled.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c13",
+      "text": "Since November 2020, users cannot consent to most newly registered multitenant apps that are not publisher verified when they request more than basic sign-in/profile from users in other tenants.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview",
+      "excerpt": "Beginning November 2020, if risk-based step-up consent is enabled, users can't consent to most newly registered multitenant apps that aren't publisher verified. The policy applies to apps that were registered after November 8, 2020, which use OAuth 2.0 to request permissions that extend beyond the basic sign-in and read user profile",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c14",
+      "text": "Publisher verification requires a verified Microsoft AI Cloud Partner Program Partner Global Account (Partner One ID), a non-onmicrosoft.com publisher domain matching the CPP email domain, an app registered with a work account, MFA, and admin roles in both Entra and Partner Center.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview",
+      "excerpt": "The developer must have a Partner One ID for a valid Microsoft AI Cloud Partner Program account that has completed the verification process. ... the app's publisher domain can't be *.onmicrosoft.com ... The user who initiates verification must sign in by using Microsoft Entra multifactor authentication.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c15",
+      "text": "Publisher verification is free and completes in minutes once prerequisites are met.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview",
+      "excerpt": "Developers who have already met these requirements can be verified in minutes. No charges are associated with completing the prerequisites for publisher verification.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c16",
+      "text": "The 'Verify and save' publisher verification request is processed automatically and may take a few minutes; the badge then propagates with some delay.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/mark-app-as-publisher-verified",
+      "excerpt": "Select Verify and save. Wait for the request to process, this may take a few minutes. ... Users who get prompted to consent to your app start seeing the badge soon after you've gone through the process successfully, although it may take some time for updates to replicate",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c17",
+      "text": "The consent prompt shows 'Unverified' in place of the publisher name for apps that are not publisher verified.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/application-consent-experience",
+      "excerpt": "If the app is publisher verified, the publisher name is displayed. If the app isn't publisher verified, \"Unverified\" is displayed instead of a publisher name.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c18",
+      "text": "For multitenant apps registered after November 30, 2020 only publisher verification status is shown on the consent prompt; a publisher domain alone no longer removes 'unverified'.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-configure-publisher-domain",
+      "excerpt": "If your multitenant was registered after November 30, 2020: If the app isn't publisher verified, the consent prompt for the app shows unverified. No publisher domain-related information appears. If the app is publisher verified, the app consent prompt shows a blue verified badge.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c19",
+      "text": "The admin consent workflow (enabled by a Global Administrator per tenant) shows users an 'Approval required' window to request admin approval; reviewers are emailed and the user is notified of the decision.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/user-admin-consent-overview",
+      "excerpt": "When the admin consent workflow is enabled, users are presented with an \"Approval required\" window for requesting admin approval for access to the application. After users submit the admin consent request, the admins who are designated as reviewers receive a notification.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c20",
+      "text": "If a risky consent is detected and the tenant has no admin consent workflow, users see error AADSTS90094 telling them to ask an admin.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-risk-based-step-up-consent",
+      "excerpt": "AADSTS90094: <clientAppDisplayName> needs permission to access resources in your organization that only an admin can grant. Request an admin to grant permission to this app before you can use it.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c21",
+      "text": "Developers can send a tenant admin to the /v2.0/adminconsent endpoint to grant tenant-wide consent; 'common' must not be used because personal accounts cannot grant admin consent.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/v2-admin-consent",
+      "excerpt": "https://login.microsoftonline.com/{tenant}/v2.0/adminconsent ?client_id=... &scope=... &redirect_uri=... &state=12345 ... Do not use 'common', as personal accounts cannot provide admin consent except in the context of a tenant.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c22",
+      "text": "Default access token lifetime is a random 60–90 minutes; refresh token max inactive time is 90 days and max age until-revoked (no longer configurable); token lifetime policies are unsupported for personal-account apps.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/configurable-token-lifetimes",
+      "excerpt": "an access token's default lifetime is assigned a random value ranging between 60-90 minutes (75 minutes on average). ... Refresh Token Max Inactive Time | MaxInactiveTime | 90 days ... Token lifetime policies aren't supported for applications developed for personal Microsoft accounts",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c23",
+      "text": "Publisher Attestation is an optional self-assessment in Partner Center, not independently verified by Microsoft, usually completed in an hour or less, valid one year.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/attestation",
+      "excerpt": "It is a self-assessment where the app developer answers questions ... Most attestations can be completed in one hour or less ... Microsoft does not independently verify the information submitted. ... Approved attestations remain valid for one year from the submission date",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c24",
+      "text": "Microsoft 365 Certification is an independent security/privacy audit requiring substantial effort and annual recertification; no processing time is published.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/certification",
+      "excerpt": "The Microsoft 365 Certification is an independent security and privacy audit of apps ... requires a substantial time and resource commitment to complete. ... Microsoft 365 Certified apps must undergo annual recertification",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c25",
+      "text": "Tenant restrictions let an organization block its users from using external accounts to access external apps from its networks/devices.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/external-id/tenant-restrictions-v2",
+      "excerpt": "you can limit what your users can access when they use an external account to sign in from your networks or devices. The tenant restrictions settings, included with cross-tenant access settings, let you create a policy to control access to external apps.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c26",
+      "text": "Personal-account-capable registrations are limited to two client secrets and at most 30 permissions per resource / 200 total.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/supported-accounts-validation",
+      "excerpt": "Client secrets (passwordCredentials) | No limit* | No limit* | Maximum of two client secrets ... No more than 200 permissions total across all APIs. Maximum of 30 permissions per resource (for example, Microsoft Graph).",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c27",
+      "text": "The auth code flow uses /common, /organizations, /consumers or a tenant ID; PKCE is recommended for all clients; refresh_token is returned only if offline_access was requested.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow",
+      "excerpt": "Valid values are common, organizations, consumers, and tenant identifiers. ... This parameter is now recommended for all application types, both public and confidential clients ... refresh_token ... Note: Only provided if offline_access scope was requested.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c28",
+      "text": "A multitenant app with a null publisher domain may only use redirect URIs sharing a single root domain (localhost exempt).",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-configure-publisher-domain",
+      "excerpt": "When the publisher domain value for a multitenant app is set to null, the app is restricted to sharing a single root domain for the redirect URIs. ... The following cases aren't subject to the single root domain restriction: ... Use of localhost as redirect URIs.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c29",
+      "text": "Common publisher-verification failures include unvetted Partner account, location (not global) Partner ID, publisher domain mismatch, and MFA not performed in-session; 'risky' rejections can be retried next day.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity-platform/troubleshoot-publisher-verification",
+      "excerpt": "MPNAccountNotVetted ... hasn't completed the vetting process ... PublisherDomainMismatch ... MFA must be performed in the same session when attempting to add a verified publisher. ... try resubmitting the verification request the next day.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c30",
+      "text": "By default, users in a tenant can consent to apps for permissions that do not require admin consent, which matches the \"Allow user consent for apps\" option. Microsoft does not state which named option a new tenant starts with.",
+      "status": "partially_supported",
+      "category": "official_doc",
+      "sourceUrl": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent",
+      "excerpt": "\"By default, all users are allowed to consent to applications for permissions that don't require administrator consent. For example, by default, a user can consent to allow an app to access their mailbox\" and the option \"Allow user consent for apps\" is described as: \"This option allows all users to consent to any permission that doesn't require admin consent, for any application\". The page does not name the default option for new tenants.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "microsoft-entra-graph-mail-calendar-c31",
+      "text": "Partner Center (Microsoft AI Cloud Partner Program) business verification duration is not published by Microsoft.",
+      "status": "unverified",
+      "category": "inference",
+      "excerpt": "No fetched Microsoft page states a processing time for Partner Center legal/business verification; community reports vary from days to weeks and were not consulted as evidence.",
+      "dateChecked": "2026-10-20"
+    }
   ],
   "unresolved": [
     "Default user consent setting for brand-new tenants (believed 'Allow user consent for apps'; not confirmed on a live page).",

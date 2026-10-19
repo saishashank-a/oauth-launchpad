@@ -1,0 +1,679 @@
+{
+  "slug": "google-gmail-read-send-agent",
+  "schemaVersion": 1,
+  "origin": "curated",
+  "provider": {
+    "name": "Google",
+    "website": "https://google.com",
+    "developerPortal": "https://console.cloud.google.com",
+    "docsHome": "https://developers.google.com/workspace/gmail/api/auth/scopes"
+  },
+  "title": "Gmail read + send for an AI email assistant (restricted scopes, public app)",
+  "useCase": "An AI email assistant that reads a user's Gmail inbox and sends replies on their behalf, offered to external users (any Google Account). Requires Gmail API scopes gmail.readonly and gmail.modify (restricted) and gmail.send (sensitive), plus openid email for login.",
+  "audience": "Startup shipping a public AI email agent that must decide whether it can afford restricted-scope verification and an annual third-party security assessment before launch.",
+  "assumptions": [
+    "You register your own OAuth client in your own Google Cloud project, not a managed/brokered app from an integration platform (a managed app shifts verification to that vendor but also shifts control of the consent screen and data).",
+    "User type External, distributed to the public. Internal-only (single Workspace org) is covered only as an exemption path.",
+    "The agent backend stores or transmits Gmail data on your servers (LLM calls, queues, caches), which is what triggers the security assessment.",
+    "Registering the OAuth client, building the integration, and each end user granting consent are three distinct things: registration grants access to no one's mailbox; each user's consent is a separate per-user authorization.",
+    "Contrast: the sibling guide google-sign-in-basic-profile requests only openid/email/profile, which are exempt from test-user lists, the unverified-app warning, the 7-day Testing expiry, and scope verification. Adding any Gmail scope removes every one of those exemptions."
+  ],
+  "registration": {
+    "availability": "public",
+    "summary": "Creating the Cloud project and OAuth client is self-serve and needs no approval. What requires approval is access to the Gmail scopes for the public: gmail.send is sensitive (sensitive-scope verification), gmail.readonly and gmail.modify are restricted (restricted-scope verification plus an annual CASA security assessment by a Google-authorized independent assessor if data touches your servers). Until verified you are limited to Testing (up to 100 listed test users, authorizations expire after 7 days) or an unverified production app that shows a warning screen and has a lifetime cap of 100 new users. Submitting for verification is not approval. This is the opposite of the identity-only guide, where openid/email/profile need none of this.",
+    "claimIds": [
+      "google-gmail-read-send-agent-c1",
+      "google-gmail-read-send-agent-c2",
+      "google-gmail-read-send-agent-c3",
+      "google-gmail-read-send-agent-c5",
+      "google-gmail-read-send-agent-c13",
+      "google-gmail-read-send-agent-c14",
+      "google-gmail-read-send-agent-c16"
+    ]
+  },
+  "scopes": [
+    {
+      "name": "https://www.googleapis.com/auth/gmail.readonly",
+      "purpose": "Read messages and settings so the agent can triage the inbox and draft context-aware replies. Classified RESTRICTED on the Gmail API scopes page. Redundant if you also request gmail.modify (modify already includes read).",
+      "access": "restricted",
+      "claimIds": [
+        "google-gmail-read-send-agent-c1",
+        "google-gmail-read-send-agent-c4",
+        "google-gmail-read-send-agent-c27"
+      ]
+    },
+    {
+      "name": "https://www.googleapis.com/auth/gmail.send",
+      "purpose": "Send replies on the user's behalf (send-only; cannot read the mailbox). Classified SENSITIVE: needs sensitive-scope verification but not the CASA assessment on its own.",
+      "access": "requires_review",
+      "claimIds": [
+        "google-gmail-read-send-agent-c2"
+      ]
+    },
+    {
+      "name": "https://www.googleapis.com/auth/gmail.modify",
+      "purpose": "Read, compose, send, label, archive, and trash (no immediate permanent delete). Needed only if the agent changes mailbox state (mark read, label, archive). Classified RESTRICTED. Because it covers reading and sending, requesting all three Gmail scopes together is likely to be challenged under the narrowest-scope rule; justify each or drop the redundant ones.",
+      "access": "restricted",
+      "claimIds": [
+        "google-gmail-read-send-agent-c3",
+        "google-gmail-read-send-agent-c24",
+        "google-gmail-read-send-agent-c27"
+      ]
+    },
+    {
+      "name": "openid email",
+      "purpose": "Login identity (sub, email). Non-sensitive and on their own exempt from Testing restrictions, but the exemption does not apply once any Gmail scope is in the same app.",
+      "access": "public",
+      "claimIds": [
+        "google-gmail-read-send-agent-c14"
+      ]
+    }
+  ],
+  "difficulty": {
+    "level": "very_high",
+    "rationale": "Driven by policy, not code. Two of the three Gmail scopes are restricted, so a public launch requires brand verification, then restricted-scope verification (demo video, per-scope justification, Limited Use compliance, privacy policy on a verified domain), then an independent CASA security assessment that must be repeated at least every 12 months. Google publishes a 6-week figure for restricted verification and calls it not guaranteed. The AI angle adds constraints: Workspace policy bars using Gmail data to train models beyond the specific user's personalized model, and humans may not read messages without affirmative user agreement. Contrast: the identity-only guide is rated low because none of these stages apply."
+  },
+  "handsOnEffort": {
+    "kind": "estimated",
+    "value": "2–4 days of developer/founder time, excluding provider wait and assessment remediation",
+    "basis": "OAuth client + Gmail API integration is about half a day. The bulk is verification prep: verified domain, public homepage, privacy policy with Google-data and Limited Use disclosures, per-scope justification, an unlisted English demo video, then CASA scanning/questionnaire and fixing findings. Assessment remediation can add far more; not estimable without your codebase.",
+    "claimIds": [
+      "google-gmail-read-send-agent-c19",
+      "google-gmail-read-send-agent-c21",
+      "google-gmail-read-send-agent-c24"
+    ]
+  },
+  "providerWait": {
+    "kind": "documented",
+    "value": "Brand verification 2-3 business days; sensitive-scope verification 10 business days (FAQ) vs 3-5 business days (sensitive-scope page), conflicting; restricted-scope verification 6 weeks (FAQ, 'several weeks' on the restricted page). Security assessment duration: not published.",
+    "basis": "Google's verification FAQ and production-readiness pages publish these figures and say they are not guaranteed and vary with developer responsiveness. No figure is published for the CASA assessment itself.",
+    "claimIds": [
+      "google-gmail-read-send-agent-c7",
+      "google-gmail-read-send-agent-c8",
+      "google-gmail-read-send-agent-c9"
+    ]
+  },
+  "reviewStages": [
+    {
+      "name": "Brand verification",
+      "trigger": "Always, as a precondition: branding must be published before you can request verification for data access (sensitive/restricted scopes).",
+      "applies": "always",
+      "wait": {
+        "kind": "documented",
+        "value": "2-3 business days (automated check usually minutes)",
+        "basis": "Verification FAQ and restricted-scope page.",
+        "claimIds": [
+          "google-gmail-read-send-agent-c9"
+        ]
+      },
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/brand-verification",
+      "claimIds": [
+        "google-gmail-read-send-agent-c20",
+        "google-gmail-read-send-agent-c25"
+      ]
+    },
+    {
+      "name": "Sensitive-scope verification (gmail.send)",
+      "trigger": "External production app requesting gmail.send. In practice it is reviewed in the same submission as the restricted scopes.",
+      "applies": "always",
+      "wait": {
+        "kind": "documented",
+        "value": "Conflicting: 10 business days (FAQ) vs 3-5 business days (sensitive-scope page)",
+        "basis": "Two official Google pages publish different figures.",
+        "claimIds": [
+          "google-gmail-read-send-agent-c8"
+        ]
+      },
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+      "claimIds": [
+        "google-gmail-read-send-agent-c2",
+        "google-gmail-read-send-agent-c19",
+        "google-gmail-read-send-agent-c24"
+      ]
+    },
+    {
+      "name": "Restricted-scope verification (gmail.readonly, gmail.modify)",
+      "trigger": "External production app requesting any restricted Gmail scope. Not needed for Testing, personal use by a few known users, or Internal user type.",
+      "applies": "always",
+      "wait": {
+        "kind": "documented",
+        "value": "6 weeks (FAQ); 'several weeks' (restricted-scope page); not guaranteed",
+        "basis": "Verification FAQ and restricted-scope verification page.",
+        "claimIds": [
+          "google-gmail-read-send-agent-c7"
+        ]
+      },
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
+      "claimIds": [
+        "google-gmail-read-send-agent-c1",
+        "google-gmail-read-send-agent-c3",
+        "google-gmail-read-send-agent-c22",
+        "google-gmail-read-send-agent-c23"
+      ]
+    },
+    {
+      "name": "CASA security assessment (annual)",
+      "trigger": "Restricted scopes AND restricted-scope data is stored on or transmitted through your servers (true for a server-side AI agent). Final step of restricted review; Google contacts you to start it. Repeat at least every 12 months after the Letter of Assessment date, and possibly when adding a new restricted scope.",
+      "applies": "conditional",
+      "wait": {
+        "kind": "unknown",
+        "value": "Not published",
+        "claimIds": []
+      },
+      "url": "https://support.google.com/cloud/answer/13465431",
+      "claimIds": [
+        "google-gmail-read-send-agent-c4",
+        "google-gmail-read-send-agent-c5",
+        "google-gmail-read-send-agent-c6",
+        "google-gmail-read-send-agent-c10",
+        "google-gmail-read-send-agent-c12",
+        "google-gmail-read-send-agent-c26"
+      ]
+    },
+    {
+      "name": "Workspace org-admin controls",
+      "trigger": "A user's Workspace admin restricts third-party apps or high-risk Workspace scopes. Separate from Google's app verification; an admin can trust your app for their org but that does not verify it for the public.",
+      "applies": "conditional",
+      "wait": {
+        "kind": "unknown",
+        "value": "Not published",
+        "claimIds": []
+      },
+      "url": "https://support.google.com/cloud/answer/15549945",
+      "claimIds": [
+        "google-gmail-read-send-agent-c17"
+      ]
+    }
+  ],
+  "prerequisites": [
+    "Google Account (Workspace account if you want an Internal pilot) and a Google Cloud project with the Gmail API enabled.",
+    "A domain you own and can verify in Google Search Console as a project Owner/Editor.",
+    "Public homepage on that domain describing the assistant (not just a login page).",
+    "Privacy policy on the same domain disclosing how Google user data is accessed, used, stored, shared, including LLM processing and Limited Use statement.",
+    "Production-grade backend security posture sufficient to pass a CASA assessment (OWASP ASVS-based)."
+  ],
+  "artifacts": [
+    "Client ID + client secret (Web application), HTTPS redirect URIs",
+    "Homepage URL, privacy policy URL, terms URL, authorized domains, logo, support email",
+    "Per-scope justification text, including why narrower scopes do not work",
+    "Unlisted YouTube demo video (English consent screen, app name, client ID in address bar, each scope's feature shown)",
+    "Limited Use disclosure statement on site or in app",
+    "CASA assessment evidence and Letter of Assessment/Validation (renewed annually)"
+  ],
+  "steps": [
+    {
+      "title": "Create project, enable Gmail API, configure Branding",
+      "details": "Create or select a Cloud project, enable the Gmail API, set app name, support email, homepage/privacy/terms links, and authorized domains.",
+      "url": "https://console.cloud.google.com/auth/branding",
+      "owner": "human",
+      "ownerNote": "Google login, possibly MFA, and acceptance of Cloud terms.",
+      "claimIds": [
+        "google-gmail-read-send-agent-c21"
+      ]
+    },
+    {
+      "title": "Audience: External + Testing, add test users",
+      "details": "Choose External. Stay in Testing while building and add up to 100 test users. Unlike the identity-only guide, every test user must be listed, sees an unverified-app warning, and their authorization (including refresh tokens) expires 7 days after consent, so the agent must handle re-consent during testing.",
+      "url": "https://console.cloud.google.com/auth/audience",
+      "owner": "either",
+      "claimIds": [
+        "google-gmail-read-send-agent-c13",
+        "google-gmail-read-send-agent-c14",
+        "google-gmail-read-send-agent-c15"
+      ]
+    },
+    {
+      "title": "Data Access: add only the Gmail scopes you will justify",
+      "details": "Add openid, email, gmail.send, and the narrowest read scope. Use gmail.readonly if the agent only reads; use gmail.modify only if it must change labels/read state/archive (it already covers read and send). Requested scopes in code must match the console.",
+      "url": "https://console.cloud.google.com/auth/scopes",
+      "owner": "either",
+      "claimIds": [
+        "google-gmail-read-send-agent-c1",
+        "google-gmail-read-send-agent-c2",
+        "google-gmail-read-send-agent-c3",
+        "google-gmail-read-send-agent-c24",
+        "google-gmail-read-send-agent-c27"
+      ]
+    },
+    {
+      "title": "Create Web OAuth client and implement offline access",
+      "details": "Create a Web application client with HTTPS redirect URIs, request access_type=offline for background inbox processing, store refresh tokens encrypted per user, and handle revocation and 7-day expiry in Testing.",
+      "url": "https://console.cloud.google.com/auth/clients",
+      "owner": "agent",
+      "claimIds": [
+        "google-gmail-read-send-agent-c14"
+      ]
+    },
+    {
+      "title": "Design for Limited Use and AI-specific policy",
+      "details": "Use Gmail data only for prominent user-facing features; no ads, no sale/transfer except allowed cases, no human reading without the user's affirmative agreement (or security/legal/aggregated exceptions), and no training of generalized AI models on Gmail data beyond that user's personalized model. If you do personalized training, the demo video must show explicit user consent. Confirm your LLM vendor's data terms fit these rules.",
+      "url": "https://developers.google.com/workspace/workspace-api-user-data-developer-policy",
+      "owner": "human",
+      "ownerNote": "Product/legal decision and representation to Google.",
+      "claimIds": [
+        "google-gmail-read-send-agent-c22",
+        "google-gmail-read-send-agent-c23",
+        "google-gmail-read-send-agent-c19"
+      ]
+    },
+    {
+      "title": "Verify domain, publish homepage and privacy policy, pass brand verification",
+      "details": "Verify every authorized domain in Search Console as a project Owner/Editor. Homepage public on the verified domain, privacy policy on the same domain and linked from the consent screen. Publish branding within 7 days of a compliant result; branding must be published before requesting data-access verification.",
+      "url": "https://support.google.com/cloud/answer/13464321",
+      "owner": "human",
+      "ownerNote": "Domain ownership verification and privacy-policy representations.",
+      "claimIds": [
+        "google-gmail-read-send-agent-c20",
+        "google-gmail-read-send-agent-c21",
+        "google-gmail-read-send-agent-c25"
+      ]
+    },
+    {
+      "title": "Record demo video and write scope justifications",
+      "details": "Unlisted YouTube video showing the full OAuth grant in English, the app name on the consent screen, the client ID in the address bar, and the feature behind each sensitive/restricted scope. Justification per scope explaining why narrower scopes fail; no 'future enhancements'.",
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
+      "owner": "either",
+      "claimIds": [
+        "google-gmail-read-send-agent-c19",
+        "google-gmail-read-send-agent-c24"
+      ]
+    },
+    {
+      "title": "Publish app and submit for verification",
+      "details": "Publish to In production (users then see the unverified-app screen and the lifetime 100-new-user cap starts counting until verification) and submit sensitive + restricted verification from the Verification Center.",
+      "url": "https://console.cloud.google.com/auth/verification",
+      "owner": "human",
+      "ownerNote": "Submission includes representations about data use; respond to reviewer emails promptly.",
+      "claimIds": [
+        "google-gmail-read-send-agent-c16",
+        "google-gmail-read-send-agent-c7"
+      ]
+    },
+    {
+      "title": "Complete CASA security assessment, then recertify yearly",
+      "details": "When Google's team contacts you, complete the assessment with a CASA-authorized independent assessor (OWASP ASVS-based, assurance level AL1/AL2 set by risk). Google charges no fee; assessor fees are not published by Google. Calendar the recertification: at least every 12 months after LOA approval, a complete re-test even if nothing changed.",
+      "url": "https://support.google.com/cloud/answer/13465431",
+      "owner": "human",
+      "ownerNote": "Contracting and paying an assessor; granting assessor access to systems.",
+      "claimIds": [
+        "google-gmail-read-send-agent-c5",
+        "google-gmail-read-send-agent-c6",
+        "google-gmail-read-send-agent-c10",
+        "google-gmail-read-send-agent-c11",
+        "google-gmail-read-send-agent-c12",
+        "google-gmail-read-send-agent-c26"
+      ]
+    }
+  ],
+  "testing": {
+    "availableNow": [
+      "Full read/send flow with up to 100 listed test users while in Testing, no verification needed.",
+      "Internal user type for a pilot inside your own Workspace org: no unverified-app screen, no 100-user cap, and the additional Workspace security requirements do not apply.",
+      "Personal use by a few users known to you without submitting for review."
+    ],
+    "restrictions": [
+      "Testing: max 100 test users, each consuming quota once added; authorizations and refresh tokens expire 7 days after consent.",
+      "Test users see an unverified-app warning before authorizing; whether any restricted Gmail scope is blocked outright for test users is not stated (documentation implies warning-then-proceed).",
+      "The identity-scope exemption (no list, no warning, no 7-day expiry) applies only when requesting name/email/profile; adding Gmail scopes voids it.",
+      "Unverified In-production app: unverified-app screen and lifetime 100-new-user cap that cannot be reset."
+    ],
+    "claimIds": [
+      "google-gmail-read-send-agent-c13",
+      "google-gmail-read-send-agent-c14",
+      "google-gmail-read-send-agent-c15",
+      "google-gmail-read-send-agent-c16",
+      "google-gmail-read-send-agent-c17",
+      "google-gmail-read-send-agent-c18",
+      "google-gmail-read-send-agent-c28",
+      "google-gmail-read-send-agent-c29"
+    ]
+  },
+  "launch": {
+    "requirements": [
+      "Published branding (verified domain, public homepage, same-domain privacy policy).",
+      "Completed sensitive verification for gmail.send and restricted verification for gmail.readonly/gmail.modify.",
+      "Passed CASA security assessment with Letter of Assessment, renewed at least every 12 months.",
+      "Ongoing compliance with the Google API Services User Data Policy, Limited Use, and Workspace AI-training restrictions."
+    ],
+    "claimIds": [
+      "google-gmail-read-send-agent-c5",
+      "google-gmail-read-send-agent-c6",
+      "google-gmail-read-send-agent-c21",
+      "google-gmail-read-send-agent-c22",
+      "google-gmail-read-send-agent-c23",
+      "google-gmail-read-send-agent-c25"
+    ]
+  },
+  "blockers": [
+    {
+      "title": "Lifetime 100-user cap exhausted before verification",
+      "description": "Publishing an unverified Gmail app to production lets up to 100 new users through, permanently for the project.",
+      "recovery": "Stay in Testing or Internal until verified; do not run public betas on the production project. The cap cannot be reset.",
+      "escalationUrl": "https://support.google.com/cloud/answer/13463817",
+      "claimIds": [
+        "google-gmail-read-send-agent-c16"
+      ]
+    },
+    {
+      "title": "Scope justification rejected",
+      "description": "Reviewer rejects because narrower scopes would work (e.g. gmail.modify requested alongside readonly + send, or features not yet built).",
+      "recovery": "Drop redundant scopes, show each scope's feature in the video, and explain concretely why narrower scopes fail.",
+      "escalationUrl": "https://support.google.com/cloud/answer/13464321",
+      "claimIds": [
+        "google-gmail-read-send-agent-c24",
+        "google-gmail-read-send-agent-c27"
+      ]
+    },
+    {
+      "title": "AI data use violates Limited Use / Workspace policy",
+      "description": "Using Gmail content to train or improve generalized models, letting staff read emails for prompt tuning, or sending data to vendors outside allowed transfers.",
+      "recovery": "Restrict to per-user features, get affirmative consent before any human review, document LLM vendor processing in the privacy policy, and add the Limited Use statement.",
+      "escalationUrl": "https://developers.google.com/workspace/workspace-api-user-data-developer-policy",
+      "claimIds": [
+        "google-gmail-read-send-agent-c22",
+        "google-gmail-read-send-agent-c23"
+      ]
+    },
+    {
+      "title": "Test users lose access every 7 days",
+      "description": "Refresh tokens from Testing expire 7 days after consent, breaking background agents.",
+      "recovery": "Expected in Testing; prompt re-consent, or use Internal user type for longer pilots.",
+      "escalationUrl": "https://support.google.com/cloud/answer/15549945",
+      "claimIds": [
+        "google-gmail-read-send-agent-c14",
+        "google-gmail-read-send-agent-c17"
+      ]
+    },
+    {
+      "title": "Missed annual recertification",
+      "description": "Restricted access depends on reassessment at least every 12 months after LOA approval.",
+      "recovery": "Track the LOA date, watch for Google's recertification email, and budget for a full re-test each year.",
+      "escalationUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
+      "claimIds": [
+        "google-gmail-read-send-agent-c6",
+        "google-gmail-read-send-agent-c12"
+      ]
+    }
+  ],
+  "nextActions": [
+    "Decide the narrowest read scope (readonly vs modify) before anything else; it drives justification and review risk.",
+    "Build and test in Testing with listed test users, or in an Internal Workspace org for longer pilots.",
+    "Stand up verified domain, homepage, and privacy policy with Google-data and LLM-processing disclosures now; brand verification gates everything.",
+    "Get quotes from CASA-authorized assessors and run a self-scan early; budget for annual recertification.",
+    "Only publish to production when ready to submit verification, to avoid burning the 100-user cap."
+  ],
+  "claims": [
+    {
+      "id": "google-gmail-read-send-agent-c1",
+      "text": "gmail.readonly is listed under Restricted scopes on the Gmail API scopes page.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://developers.google.com/workspace/gmail/api/auth/scopes",
+      "excerpt": "Restricted scopes ... https://www.googleapis.com/auth/gmail.readonly ... View your email messages and settings.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c2",
+      "text": "gmail.send is listed under Sensitive scopes on the Gmail API scopes page.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://developers.google.com/workspace/gmail/api/auth/scopes",
+      "excerpt": "Sensitive scopes ... https://www.googleapis.com/auth/gmail.send ... Send email on your behalf.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c3",
+      "text": "gmail.modify is restricted and covers read, compose and send, but not immediate permanent deletion.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://developers.google.com/workspace/gmail/api/auth/scopes",
+      "excerpt": "Read, compose, and send emails from your Gmail account. This scope does not allow immediate, permanent deletion of threads and messages, bypassing the trash.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c4",
+      "text": "Restricted scopes require restricted-scope verification, and storing or transmitting restricted-scope data on servers triggers a security assessment.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://developers.google.com/workspace/gmail/api/auth/scopes",
+      "excerpt": "These scopes provide wide access to Google user data and require restricted scope OAuth App Verification. ... If you store restricted scope data on servers (or transmit), then you must go through a security assessment.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c5",
+      "text": "Restricted-scope apps must undergo an annual security assessment by an independent, Google-approved third-party assessor under the App Defense Alliance CASA framework.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
+      "excerpt": "the system must undergo an annual security assessment from an independent, third-party assessor that is approved by Google ... we use the App Defense Alliance and the cloud application security assessment framework (CASA)",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c6",
+      "text": "Reassessment is due at least every 12 months after the LOA approval date, may be needed when adding a restricted scope, and Google emails when it is time.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
+      "excerpt": "complete a security assessment at least every 12 months after your assessor's Letter of Assessment (LOA) approval date ... The Google review team emails you when it is time to recertify your app.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c7",
+      "text": "Google publishes a 6-week estimate for restricted-scope verification (FAQ) and 'several weeks' on the restricted page; estimates are not guaranteed.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/13463817",
+      "excerpt": "Restricted scope verification: 6 weeks. Please note that these estimates are not guaranteed and will vary based on developer responsiveness. (Restricted page: 'the restricted scopes verification process can potentially take several weeks to complete')",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c8",
+      "text": "Two official Google pages give different figures for sensitive-scope verification: 10 business days vs 3-5 business days.",
+      "status": "conflicting",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/13463817",
+      "excerpt": "FAQ (support.google.com/cloud/answer/13463817): 'Sensitive scope verification: 10 Business days'. Sensitive-scope page (developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification): 'The sensitive scope verification process typically takes 3-5 business days to complete.'",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c9",
+      "text": "Brand verification typically takes 2-3 business days; the automated review usually completes in minutes.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
+      "excerpt": "brand verification step first, which typically takes 2-3 business days ... The automated review usually completes in a few minutes.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c10",
+      "text": "Google charges no fee for the security assessment; assessments are done by CASA-authorized independent assessors.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/13463817",
+      "excerpt": "Google does not charge the developer any fees for security assessment. ... Security assessments are conducted by CASA authorized independent security assessors.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c11",
+      "text": "Independent assessors charge their own fees, which Google does not publish; the developer pays them.",
+      "status": "unverified",
+      "category": "inference",
+      "excerpt": "Not found on any fetched Google page. Inferred from 'Google does not charge the developer any fees' plus third-party assessors being separate firms.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c12",
+      "text": "The security assessment is generally annual and each reassessment is a complete test whether or not the app changed.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/13463817",
+      "excerpt": "In general, the security assessment must be done once a year. ... a complete test of your application whether you have made any changes or not.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c13",
+      "text": "Testing-status projects are limited to 100 listed test users, and each consumes quota once added.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/15549945",
+      "excerpt": "limited to up to 100 test users listed in the OAuth consent screen. ... A test user consumes a project's test user quota once added to the project.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c14",
+      "text": "Test-user authorizations, including offline refresh tokens, expire 7 days after consent; the exemption applies only to name/email/profile and not when other scopes are requested.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/15549945",
+      "excerpt": "Authorizations by a test user will expire seven days from the time of consent. ... that token will also expire. ... If your app requests any other OAuth scopes, then this exception does not apply.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c15",
+      "text": "Listed test users can authorize an unverified app after a warning; the page does not say restricted scopes are blocked for them.",
+      "status": "partially_supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/15549945",
+      "excerpt": "Google will display a warning message before allowing a specified test user to authorize scopes. Page does not separately address restricted vs sensitive scopes for test users.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c16",
+      "text": "Unverified apps using sensitive or restricted scopes have a 100 new-user cap over the project's lifetime that cannot be reset.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/13463817",
+      "excerpt": "unverified apps that are accessing restricted or sensitive scopes have a 100 new-user cap restriction ... the user cap applies over the entire lifetime of the project, and it cannot be reset or changed.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c17",
+      "text": "Internal-only apps are not subject to the unverified-app screen or 100-user cap; development/testing apps are not subject to verification.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/13464323",
+      "excerpt": "Your app will not be subject to the unverified app screen or the 100-user cap if it's designated as internal-only. ... Apps in development/testing/staging mode are not subject to verification.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c18",
+      "text": "Workspace additional requirements (including restricted-scope security measures) do not apply to apps used only within your own organization.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://developers.google.com/workspace/workspace-api-user-data-developer-policy",
+      "excerpt": "If an app is only used by users within your own organization, then these additional requirements do not apply.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c19",
+      "text": "Verification requires an unlisted YouTube demo video showing the English OAuth grant flow, app name, and each scope's functionality; AI training use must show explicit consent.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/13464321",
+      "excerpt": "Must show the end-to-end flow of your app including the OAuth grant process ... Must demonstrate the app functionalities that utilize the requested OAuth scopes ... must show the flow of the user explicitly consenting to their data used for personalized AI model training",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c20",
+      "text": "All authorized domains must be verified in Google Search Console by a project owner or editor.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/13464321",
+      "excerpt": "You must verify that you own all domains listed in your Authorized domains section of the OAuth consent screen editor.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c21",
+      "text": "The privacy policy must be on the homepage's domain, linked from the consent screen, and disclose handling of Google user data.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/13464321",
+      "excerpt": "The Privacy Policy should be hosted within the domain that hosts your homepage ... must disclose how your app accesses, uses, stores, and/or shares Google user data.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c22",
+      "text": "Limited Use: sensitive/restricted data may only provide or improve prominent user-facing features; no ads or selling; restricted apps must comply with the User Data Policy and Limited Use.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/13464321",
+      "excerpt": "only be used to provide or improve user-facing features that are prominent in the requesting app's user interface ... Transferring, selling, or using user data for serving ads",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c23",
+      "text": "Workspace policy prohibits using Workspace (including Gmail) data to create, train, or improve ML/AI models beyond that user's personalized model.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://developers.google.com/workspace/workspace-api-user-data-developer-policy",
+      "excerpt": "Transferring, selling, or using user data to create, train, or improve a machine learning or artificial intelligence model ... beyond that specific user's personalized model for the appropriate use case or user-facing feature.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c24",
+      "text": "Apps must request the narrowest scopes needed and justify why narrower scopes would not work; insufficient justification can lead to rejection.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/13464321",
+      "excerpt": "You must only request the narrowest scope(s) your app needs to function ... If your justification is deemed insufficient, your app verification request may be rejected.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c25",
+      "text": "Branding must be published before requesting data-access (sensitive scope) verification; compliant brand results are valid 7 days.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+      "excerpt": "you must have a published branding status before you can request verification for data access ... Compliant verification results are valid for 7 days.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c26",
+      "text": "CASA is OWASP ASVS-based, assigns AL1 or AL2 by risk, issues a Letter of Validation, requires yearly revalidation, and is the final step of restricted review; Google contacts you to start it.",
+      "status": "partially_supported",
+      "category": "official_doc",
+      "sourceUrl": "https://support.google.com/cloud/answer/13465431",
+      "excerpt": "Fetch returned degraded text; key fragments: 'Applications ... assigned either AL1 or AL2 assurance level', 'All applications must ... revalidated every year', 'A security assessment ... final step ... restricted scopes review process'. No cost or exemption text found.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c27",
+      "text": "Because gmail.modify already covers reading and sending, requesting gmail.readonly and gmail.send alongside it is likely redundant and may be challenged under the narrowest-scope rule.",
+      "status": "unverified",
+      "category": "inference",
+      "excerpt": "Inference from c3 scope description and c24 narrowest-scope rule; Google does not state this combination outcome.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c28",
+      "text": "Workspace Internal apps using restricted scopes are exempt from the CASA assessment as well as verification.",
+      "status": "partially_supported",
+      "category": "official_doc",
+      "sourceUrl": "https://developers.google.com/workspace/workspace-api-user-data-developer-policy",
+      "excerpt": "Workspace policy: 'If an app is only used by users within your own organization, then these additional requirements do not apply.' Restricted page lists internal as a verification exception but separately notes admin domain-wide installs with restricted scopes still require verification.",
+      "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-gmail-read-send-agent-c29",
+      "text": "Apps used only by you or a few users personally known to you need not be submitted for review.",
+      "status": "supported",
+      "category": "official_doc",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
+      "excerpt": "if you are the only user of your app or if your app is used by only a few users, all of whom are known personally to you",
+      "dateChecked": "2026-10-20"
+    }
+  ],
+  "unresolved": [
+    "Cost of the CASA assessment: Google says it charges no fee, but assessor fees are not published by Google.",
+    "Sensitive-scope verification time: FAQ says 10 business days, sensitive-scope page says 3-5 business days. No published duration for the CASA assessment itself.",
+    "Whether listed test users can grant restricted Gmail scopes without any block in Testing (docs describe a warning, not restricted-specific behavior); not firsthand tested.",
+    "Exact boundary of the server-side trigger: a purely client-side agent may avoid the assessment per 'store or transmit on servers' wording, but an LLM-backed agent almost certainly transmits data.",
+    "Whether gmail.readonly + gmail.send + gmail.modify together will pass justification; not documented."
+  ],
+  "lastResearched": "2026-10-20",
+  "researchLog": [
+    "Fetched Gmail scopes page, restricted- and sensitive-scope verification pages, verification FAQ, requirements, not-needed, unverified-apps, audience, security-assessment, verification overview, User Data Policy, Workspace developer policy, OAuth2 expiration section.",
+    "WebSearch for CASA pricing failed (502); no pricing used.",
+    "Contrasted against google-sign-in-basic-profile (identity-only, no verification)."
+  ]
+}

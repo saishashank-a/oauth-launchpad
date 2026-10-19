@@ -17,7 +17,7 @@ function readFileGuides(): Guide[] {
   const out: Guide[] = [];
   for (const f of files) {
     try {
-      out.push(Guide.parse(JSON.parse(fs.readFileSync(path.join(DIR, f), "utf8"))));
+      out.push({ ...Guide.parse(JSON.parse(fs.readFileSync(path.join(DIR, f), "utf8"))), origin: "curated" });
     } catch (e) {
       console.error(`[guides] skipping invalid ${f}:`, e instanceof Error ? e.message : e);
     }

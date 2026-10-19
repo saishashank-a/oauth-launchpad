@@ -13,7 +13,7 @@ async function main() {
     try {
       const { guide, errors } = validateGuide(JSON.parse(readFileSync(join("data/guides", f), "utf8")));
       if (errors.length) throw new Error(errors.join("; "));
-      await saveGuide(guide);
+      await saveGuide({ ...guide, origin: "curated" }); // ponytail: data/guides is the curated set by definition
       ok++; console.log(`upserted ${guide.slug}`);
     } catch (e) { bad++; console.log(`SKIP ${f}: ${e instanceof Error ? e.message : e}`); }
   }

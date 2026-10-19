@@ -194,20 +194,23 @@ Rules: every claim must cite exactly one sourceUrl from the provided sources, an
     const id = `${slug}-c${i + 1}`;
     topicById.set(id, c.topic);
     const page = pages.get(normUrl(c.sourceUrl));
-    const status = page ? (textContainsExcerpt(page.text, c.excerpt) ? "supported" : "partially_supported") : "unverified";
-    const excerpt = status === "supported" ? c.excerpt
-      : status === "partially_supported" ? `[Not found verbatim on the fetched page] ${c.excerpt}`
+    // A quote the model returns that is NOT on the fetched page may be fabricated, so it is unverified,
+    // not "partially supported". partially_supported is reserved for human judgement (see FACT-CHECK).
+    const verified = !!page && textContainsExcerpt(page.text, c.excerpt);
+    const status = verified ? "supported" : "unverified";
+    const excerpt = verified ? c.excerpt
+      : page ? `[Not found verbatim on the fetched page] ${c.excerpt}`
       : `[Source page not fetched; based on search snippet] ${c.excerpt}`;
     return { id, text: c.text, status, category: isOfficial(c.sourceUrl) ? "official_doc" : "community", sourceUrl: c.sourceUrl, excerpt, dateChecked: date };
   });
   const count = (s: string) => claims.filter((c) => c.status === s).length;
-  log.push(`extract: ${claims.length} claims (${count("supported")} supported, ${count("partially_supported")} partially supported, ${count("unverified")} unverified)`);
-  progress("extract", `Extracted ${claims.length} claims: ${count("supported")} verified verbatim, ${count("partially_supported")} partial, ${count("unverified")} unverified`);
+  log.push(`extract: ${claims.length} claims (${count("supported")} supported, ${count("unverified")} unverified)`);
+  progress("extract", `Extracted ${claims.length} claims: ${count("supported")} verified verbatim on the source page, ${count("unverified")} unverified`);
   if (!claims.length) throw new AppError("insufficient_evidence", `No usable claims about ${name}'s OAuth app setup were found in the fetched sources. Nothing was saved.`);
   checkpoint();
 
   // --- gaps ---------------------------------------------------------------------
-  const backed = (topic: Topic, statuses = ["supported", "partially_supported"]) => claims.some((c) => topicById.get(c.id) === topic && statuses.includes(c.status));
+  const backed = (topic: Topic, statuses = ["supported"]) => claims.some((c) => topicById.get(c.id) === topic && statuses.includes(c.status));
   const gaps = GAP_TOPICS.filter(([t]) => !backed(t)).map(([, label]) => `No official page found describing ${label}.`);
   progress("validate", gaps.length ? `Evidence gaps: ${gaps.length} topic(s) lack verified sources` : "All core topics have at least one sourced claim");
 
@@ -225,7 +228,7 @@ Rules:
 - providerWait: kind "documented" only if a cited claim states the provider's published figure; otherwise kind "unknown", value "Not published". Never "observed".
 - handsOnEffort: kind "estimated" with a value and a basis.
 - reviewStages[].wait follows the same rules as providerWait.
-- registration.availability: "public"/"partner_only" only if a supported or partially_supported registration claim backs it; otherwise "undocumented" or "unknown", and say so in the summary.
+- registration.availability: "public"/"partner_only" only if a supported registration claim backs it; otherwise "undocumented" or "unknown", and say so in the summary.
 - steps.owner: "human" for logins, MFA, payment, legal attestations, review submissions (add ownerNote); "agent" for API/config work; else "either".
 - difficulty is an assessment; the rationale explains what drives it.
 - unresolved: honest list of what could not be confirmed. Use only real URLs from the claims or provider site for url fields.
@@ -254,8 +257,8 @@ ${JSON.stringify(z.toJSONSchema(SynthOut, { io: "input" }))}`,
   if (guide.handsOnEffort.kind === "observed" || (guide.handsOnEffort.kind === "documented" && !supports(guide.handsOnEffort.claimIds))) guide.handsOnEffort.kind = "estimated";
   if (!backed("registration", ["supported"])) {
     if (guide.registration.availability === "public" || guide.registration.availability === "partner_only") {
-      log.push(`enforce: registration.availability "${guide.registration.availability}" lacked a verified claim → ${backed("registration") ? "unknown" : "undocumented"}`);
-      guide.registration.availability = backed("registration") ? "unknown" : "undocumented";
+      log.push(`enforce: registration.availability "${guide.registration.availability}" lacked a verified claim → ${backed("registration", ["unverified"]) ? "unknown" : "undocumented"}`);
+      guide.registration.availability = backed("registration", ["unverified"]) ? "unknown" : "undocumented";
     }
     if (!/not (been )?verified|undocumented|could not (be )?(confirm|verif)/i.test(guide.registration.summary))
       guide.registration.summary = `Registration process could not be verified against an official page during research. ${guide.registration.summary}`;

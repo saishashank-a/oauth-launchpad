@@ -1,7 +1,7 @@
 {
   "slug": "google-sign-in-basic-profile",
   "schemaVersion": 1,
-  "origin": "generated",
+  "origin": "curated",
   "provider": {
     "name": "Google",
     "website": "https://google.com",
@@ -92,7 +92,8 @@
       "url": "https://support.google.com/cloud/answer/9110914",
       "claimIds": [
         "google-sign-in-basic-profile-c9",
-        "google-sign-in-basic-profile-c20"
+        "google-sign-in-basic-profile-c20",
+        "google-sign-in-basic-profile-c24"
       ]
     },
     {
@@ -174,7 +175,9 @@
         "google-sign-in-basic-profile-c3",
         "google-sign-in-basic-profile-c4",
         "google-sign-in-basic-profile-c5",
-        "google-sign-in-basic-profile-c6"
+        "google-sign-in-basic-profile-c6",
+        "google-sign-in-basic-profile-c22",
+        "google-sign-in-basic-profile-c23"
       ]
     },
     {
@@ -249,7 +252,9 @@
       "google-sign-in-basic-profile-c6",
       "google-sign-in-basic-profile-c8",
       "google-sign-in-basic-profile-c14",
-      "google-sign-in-basic-profile-c18"
+      "google-sign-in-basic-profile-c18",
+      "google-sign-in-basic-profile-c22",
+      "google-sign-in-basic-profile-c23"
     ]
   },
   "launch": {
@@ -265,7 +270,8 @@
       "google-sign-in-basic-profile-c9",
       "google-sign-in-basic-profile-c15",
       "google-sign-in-basic-profile-c16",
-      "google-sign-in-basic-profile-c19"
+      "google-sign-in-basic-profile-c19",
+      "google-sign-in-basic-profile-c24"
     ]
   },
   "blockers": [
@@ -286,7 +292,8 @@
       "claimIds": [
         "google-sign-in-basic-profile-c8",
         "google-sign-in-basic-profile-c18",
-        "google-sign-in-basic-profile-c20"
+        "google-sign-in-basic-profile-c20",
+        "google-sign-in-basic-profile-c23"
       ]
     },
     {
@@ -517,16 +524,36 @@
     },
     {
       "id": "google-sign-in-basic-profile-c22",
-      "text": "The 'When is verification not needed' page states a 100-user cap is in effect for dev/testing/staging apps, while the Audience page says identity-only apps are exempt from the test-user list and warning. Whether the exemption also lifts any user cap for identity-only apps in Testing is not stated explicitly on either page.",
+      "text": "The 100-user cap is tied to unapproved sensitive/restricted scopes and the unverified-app screen, not to Testing status as such: the console Audience page says the cap counts users granting unapproved sensitive or restricted scopes (c23), and Page A ties the cap to the unverified-app screen. Identity-only scopes are non-sensitive and show no warning (c6), so the cap should not bind an identity-only app. Not yet tested with a project that explicitly requests openid/email/profile.",
       "status": "partially_supported",
       "category": "official_doc",
       "sourceUrl": "https://support.google.com/cloud/answer/13464323",
-      "excerpt": "Page A (13464323): 'the 100-user cap will be in effect when an app is in development/testing/staging.' Page B (15549945): 'your users do not need to be in the trusted user list, they will not see a warning message'. Page B does not say 'no cap' in those words; the cap text on Page A concerns the unverified-app screen, which identity-only apps do not show.",
+      "excerpt": "Page A (13464323): 'Your app will be subject to the unverified app screen and the 100-user cap will be in effect' while in development/testing/staging. Page B (15549945): identity-only users 'do not need to be in the trusted user list, they will not see a warning message'. Console Audience page (firsthand, c23): 'The user cap limits the number of users that can grant permission to your app when requesting unapproved sensitive or restricted scopes.' Console Verification centre (c24): 'Verification is not required since your app is not requesting any sensitive or restricted scopes.' Remaining gap: inspected project had no scopes, not openid/email/profile.",
       "dateChecked": "2026-10-20"
+    },
+    {
+      "id": "google-sign-in-basic-profile-c23",
+      "text": "The Google Auth Platform Audience page states the 100-user cap counts only users granting unapproved sensitive or restricted scopes, applies over the project's lifetime, and cannot be reset.",
+      "status": "supported",
+      "category": "firsthand_test",
+      "sourceUrl": "https://console.cloud.google.com/auth/audience",
+      "excerpt": "Audience page, verbatim: \"The user cap limits the number of users that can grant permission to your app when requesting unapproved sensitive or restricted scopes. The user cap applies over the entire lifetime of the project, and it cannot be reset or changed.\" Same panel: \"the user cap does not apply if you are only requesting approved sensitive or restricted scopes.\" The inspected project (External, In production, no scopes) showed \"0 users / 100 user cap\".",
+      "dateChecked": "2026-10-20",
+      "setupAttemptRef": "setup-notes/google.md#attempt-1"
+    },
+    {
+      "id": "google-sign-in-basic-profile-c24",
+      "text": "For a project requesting no sensitive or restricted scopes, the Verification centre states verification is not required.",
+      "status": "supported",
+      "category": "firsthand_test",
+      "sourceUrl": "https://console.cloud.google.com/auth/verification",
+      "excerpt": "Verification centre, Data access status, verbatim: \"Verification is not required since your app is not requesting any sensitive or restricted scopes.\" Branding status: \"Your branding is not being shown to users.\" (Inspected project requested no scopes at all; it had not explicitly added openid/email/profile.)",
+      "dateChecked": "2026-10-20",
+      "setupAttemptRef": "setup-notes/google.md#attempt-1"
     }
   ],
   "unresolved": [
-    "Whether an identity-only app left in Testing status indefinitely has any user cap at all (Google's wording exempts such apps from the test list and warning; it does not literally say 'no cap'). Safe path: publish to production, which has no cap for non-sensitive scopes.",
+    "Whether an identity-only app shows a '0 / 100 user cap' counter that ever increments: the console says the cap counts only users granting unapproved sensitive/restricted scopes (c23), which identity-only scopes are not, but this was observed on a project with no scopes, not one explicitly requesting openid/email/profile.",
     "Whether the pre-filled Sign-In scopes in the console use the short names (openid/email/profile) or the userinfo.* URLs; both are documented as equivalent but the console UI was not inspected.",
     "Exact behavior when a Workspace admin blocks unverified third-party apps for identity-only sign-in (admin trusted-apps controls were only skimmed).",
     "Exact cost of a restricted-scope CASA assessment (out of scope here; not published on Google's page)."
