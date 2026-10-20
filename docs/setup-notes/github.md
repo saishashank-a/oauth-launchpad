@@ -58,10 +58,10 @@ The timer excludes reading docs, the earlier page load of the developer settings
 - Anything about production readiness. Creating an app is not approval, and GitHub does not approve OAuth Apps.
 
 ### Cleanup
-The test app `oauth-launchpad-test` still exists on the user's account with 0 users and no secret. Delete it at Settings, Developer settings, OAuth Apps, oauth-launchpad-test, Advanced, Delete application.
+The test app `oauth-launchpad-test` was deleted on 2026-10-20 after the investigation. It had 0 users and no secret. GitHub reported "Job queued to delete application."
 
 ### Remaining manual checklist (pending)
 - [ ] Generate a client secret and keep it outside the repo.
 - [ ] Click Authorize as a test user. Exchange the code for a token. Call `GET /user` and `GET /user/repos`.
 - [ ] Click Request for an org. Record what the org owner sees and how long approval takes.
-- [ ] Delete the test app.
+- [x] Delete the test app (2026-10-20).
