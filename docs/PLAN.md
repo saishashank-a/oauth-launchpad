@@ -1,6 +1,6 @@
 # OAuth Launchpad — build plan & contracts (owner: main session)
 
-Stack: Next.js 16 (app router, TS, Tailwind 4), zod, postgres (Supabase), @anthropic-ai/sdk. Deploy: Vercel.
+Stack: Next.js 16 (app router, TS, Tailwind 4), zod, postgres (Supabase), Gemini REST API. Deploy: Vercel.
 Guides: curated JSON in data/guides/*.json (seeded into DB by scripts/seed.ts); generated guides persisted in DB. Both share lib/schema.ts `Guide`.
 
 ## Contracts
@@ -15,4 +15,4 @@ Guides: curated JSON in data/guides/*.json (seeded into DB by scripts/seed.ts); 
 - Guide URL: /g/[slug]. Library: /. Docs: /notes (setup notes), /audit (fact-check), /agent-log. Those render markdown from docs/*.md at build time.
 
 ## Env (.env.example)
-DATABASE_URL, ANTHROPIC_API_KEY, TAVILY_API_KEY, GENERATE_RATE_LIMIT_PER_HOUR (default 5), NEXT_PUBLIC_SITE_URL.
+DATABASE_URL, GEMINI_API_KEY, TAVILY_API_KEY, GENERATE_RATE_LIMIT_PER_HOUR (default 5), NEXT_PUBLIC_SITE_URL.

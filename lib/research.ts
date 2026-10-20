@@ -87,7 +87,7 @@ async function pipeline(input: { query: string; website?: string }, emit: (ev: R
   const query = input.query.trim();
   if (!query || query.length > 200 || /[\r\n]/.test(query)) throw new AppError("bad_input", "Query must be 1–200 characters on a single line.");
   // Fail fast before spending any upstream calls.
-  for (const k of ["TAVILY_API_KEY", "ANTHROPIC_API_KEY", "DATABASE_URL"]) if (!process.env[k]) throw new ConfigError(k);
+  for (const k of ["TAVILY_API_KEY", "GEMINI_API_KEY", "DATABASE_URL"]) if (!process.env[k]) throw new ConfigError(k);
 
   const log: string[] = [];
   let toolCalls = 0;

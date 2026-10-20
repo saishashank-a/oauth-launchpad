@@ -28,8 +28,8 @@ npm run dev                     # http://localhost:3000
 | Variable | Needed for |
 |---|---|
 | `DATABASE_URL` | Guide storage and share URLs. Use a Supabase pooled connection string on port 6543. Without it, pages read the curated JSON files read-only. |
-| `ANTHROPIC_API_KEY` | Live generation: claim extraction and guide drafting. |
-| `TAVILY_API_KEY` | Live generation: web search. |
+| `GEMINI_API_KEY` | Live generation: claim extraction and guide drafting. The free tier works; get a key at https://aistudio.google.com/apikey. |
+| `TAVILY_API_KEY` | Live generation: web search. The free plan gives 1,000 searches a month; sign up at https://app.tavily.com. |
 | `GENERATE_RATE_LIMIT_PER_HOUR` | Per-IP limit. Defaults to 5. |
 
 Without the two API keys, the generate endpoint returns a `missing_config` error. There is no mock fallback.
@@ -52,7 +52,7 @@ app/api/generate          POST {query, website?} -> NDJSON progress stream
 lib/schema.ts             Zod Guide schema + validateGuide() cross-reference/evidence checks
 lib/research.ts           research workflow (below)
 lib/safeFetch.ts          SSRF-safe fetch + verbatim excerpt matcher
-lib/search.ts, lib/llm.ts Tavily search, Anthropic JSON calls with Zod validation and one repair retry
+lib/search.ts, lib/llm.ts Tavily search, Gemini JSON-mode calls with Zod validation and one repair retry
 lib/db.ts                 Postgres: one `guides` table, jsonb body, slug primary key
 data/guides/*.json        curated guides (source of truth, seeded into the DB)
 ```
