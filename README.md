@@ -2,7 +2,7 @@
 
 Guides for developers building AI agents who need their **own** provider OAuth app. Each guide covers one use case and one scope set. It answers what you can test today, what must happen before real users can connect, how much hands-on work to expect, which reviews or waits apply, what can block you, and which steps an agent can do versus a human. Factual claims carry their own evidence.
 
-> **Submission status: incomplete.** See [Limitations](#limitations). The app runs locally with durable Postgres storage, and live generation has been tested end to end with Gemini and Tavily. It is not deployed yet: the Vercel CLI token on the build machine had expired.
+> **Live app:** https://oauth-launchpad.vercel.app. Live generation is tested end to end in production with Gemini and Tavily free tiers. See [Limitations](#limitations).
 
 ## Concepts the guides keep separate
 
@@ -103,6 +103,7 @@ Run on 2026-10-20 against the local server with real Gemini and Tavily keys.
 | A two-line query | Bad input | Rejected. |
 | 6th request in an hour | Rate limit | "Generation limit reached. Try again in about 52 minutes." |
 | AWS address, before the IP fix | Timeout | Stopped at 240 s with an honest message. Nothing saved. |
+| Calendly, on production | Success on deployed app | First try: one Gemini call hung and the run stopped with a timeout message. After the per-call timeout fix, the guide saved in 110 s with 13 claims, 12 verified, and 4 evidence gaps flagged. |
 | Gemini overloaded or out of quota | Upstream failure | 503 retried once. 429 moved to the next model. A clear message when all models fail. |
 
 ## Investigations and audit
@@ -116,7 +117,7 @@ Run on 2026-10-20 against the local server with real Gemini and Tavily keys.
 
 ## Limitations
 
-- **Not deployed.** The Vercel CLI token had expired. To deploy, run `vercel login`, then `vercel link`, set the env vars with `vercel env add`, then `vercel --prod`. The guide route's `maxDuration` is 300 s, which needs a plan that allows it.
+- **Deployment.** The app is on Vercel at https://oauth-launchpad.vercel.app. To redeploy your own copy, run `vercel login`, then `vercel link`, set the env vars from `.env.example` with `vercel env add`, then `vercel --prod`. The generate route needs a `maxDuration` of 300 s.
 - **Free-tier model quotas are small.** Google's free tier allowed 20 requests a day on `gemini-3.8-flash` for this key, and a guide takes 3 to 5 requests. When a model hits its quota, the app moves to the next model in `GEMINI_MODELS`. Lighter fallback models produced thinner guides in testing, with 8 claims against 16 to 22.
 - **Ambiguity detection depends on the model.** "Apollo" returned Apollo.io and Apollo GraphQL as choices, but one earlier run picked Apollo.io directly. "Mercury" always resolved to the bank. Any runner-up scoring 0.5 or more now triggers a choice.
 - **Large providers can exceed the time budget.** A run on an AWS address ended with an honest timeout during drafting. Nothing was saved.
