@@ -37,7 +37,9 @@ The user asked midway for implementation work to run on Opus, with the main sess
 - **Session limit.** An API session limit cut off six agents partway. Two build agents and one research agent were resumed. Three research agents were relaunched from scratch. One guide had been written with the wrong field names and was rewritten.
 - **Slack setup.** Blocked at sign-in. No Slack session existed in the browser, so it is pending with a manual checklist.
 - **Google setup.** Read-only. The console opened an existing production project, and changing it was out of scope. No new project or client was created.
-- **Live generation never ran end to end.** No `ANTHROPIC_API_KEY` or `TAVILY_API_KEY` was available. The endpoint returns an honest `missing_config` error; there is no mock fallback.
+- **Model provider switch.** No Anthropic key was available, so at the user's request the model calls moved to Gemini's free tier. The first Gemini key was mis-pasted and rejected. `gemini-2.5-flash` was retired for new users, and newer models only work through the Interactions API, so the client was rewritten for it.
+- **Free-tier quota.** `gemini-3.8-flash` allowed 20 requests a day. A fallback chain across models was added after the quota ran out mid-testing.
+- **Live generation results.** See the test table in the README. Two fixes came out of testing. First, IP and local-host inputs were being treated as names; they are now rejected. Second, ambiguity detection was inconsistent; a stricter runner-up rule was added. One duplicate guide created during testing was deleted.
 - **Deploy.** The Vercel CLI token on this machine had expired.
 - **Evidence-rule bug, caught in review.** The generator first marked a model-supplied quote as "partially supported" when the quote was not on the fetched page. That would let a fabricated quote look half-verified. It now marks such claims "unverified".
 - **Origin labels.** Research agents labelled curated guides as "generated" because the brief did not say. The seed script now forces "curated" for the curated folder, and the brief was updated.

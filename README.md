@@ -2,7 +2,7 @@
 
 Guides for developers building AI agents who need their **own** provider OAuth app. Each guide covers one use case and one scope set. It answers what you can test today, what must happen before real users can connect, how much hands-on work to expect, which reviews or waits apply, what can block you, and which steps an agent can do versus a human. Factual claims carry their own evidence.
 
-> **Submission status: incomplete.** See [Limitations](#limitations). The app builds and runs locally with durable Postgres storage. Live generation is implemented but has not run end to end, because no Anthropic or Tavily key was available. It is not deployed yet: the Vercel CLI token on the build machine had expired.
+> **Submission status: incomplete.** See [Limitations](#limitations). The app runs locally with durable Postgres storage, and live generation has been tested end to end with Gemini and Tavily. It is not deployed yet: the Vercel CLI token on the build machine had expired.
 
 ## Concepts the guides keep separate
 
@@ -52,7 +52,7 @@ app/api/generate          POST {query, website?} -> NDJSON progress stream
 lib/schema.ts             Zod Guide schema + validateGuide() cross-reference/evidence checks
 lib/research.ts           research workflow (below)
 lib/safeFetch.ts          SSRF-safe fetch + verbatim excerpt matcher
-lib/search.ts, lib/llm.ts Tavily search, Gemini JSON-mode calls with Zod validation and one repair retry
+lib/search.ts, lib/llm.ts Tavily search; Gemini Interactions API in JSON mode, Zod validation, one repair retry, per-model quota fallback
 lib/db.ts                 Postgres: one `guides` table, jsonb body, slug primary key
 data/guides/*.json        curated guides (source of truth, seeded into the DB)
 ```
@@ -89,6 +89,22 @@ Each claim records an ID, text, a **status** (supported, partially supported, un
 - **Tavily for search**, because it is a simple managed API. Pages are fetched by our own SSRF-guarded fetcher, so the excerpt check runs on content we retrieved ourselves.
 - **No auth, no vector DB, no queue.** A single NDJSON streaming request reports real stage progress.
 
+## Live generation test results
+
+Run on 2026-10-20 against the local server with real Gemini and Tavily keys.
+
+| Input | Path tested | Result |
+|---|---|---|
+| Pipedrive | Success | Guide saved in 117 s. 22 claims, all verified verbatim on official pipedrive.com pages. Review wait shown as "Not published". |
+| Robinhood | Partial result | Guide saved. Found only per-user API keys for crypto trading. Third-party OAuth is listed as unresolved, not invented. 3 topics flagged as evidence gaps. |
+| Apollo | Ambiguous name | Returned two candidates, Apollo.io and Apollo GraphQL, for the user to pick. Nothing saved. |
+| Apollo, in the browser | Full UI flow | Progress streamed stage by stage, then redirected to the saved guide. |
+| `http://169.254.169.254/...`, `10.0.0.1`, `[::1]`, `localhost`, `stripe.local` | Unsafe input | Rejected as bad input before any upstream call. |
+| A two-line query | Bad input | Rejected. |
+| 6th request in an hour | Rate limit | "Generation limit reached. Try again in about 52 minutes." |
+| AWS address, before the IP fix | Timeout | Stopped at 240 s with an honest message. Nothing saved. |
+| Gemini overloaded or out of quota | Upstream failure | 503 retried once. 429 moved to the next model. A clear message when all models fail. |
+
 ## Investigations and audit
 
 - **Setup notes:** [`docs/setup-notes/`](docs/setup-notes/), shown at `/notes`.
@@ -101,7 +117,10 @@ Each claim records an ID, text, a **status** (supported, partially supported, un
 ## Limitations
 
 - **Not deployed.** The Vercel CLI token had expired. To deploy, run `vercel login`, then `vercel link`, set the env vars with `vercel env add`, then `vercel --prod`. The guide route's `maxDuration` is 300 s, which needs a plan that allows it.
-- **Live generation not exercised.** The workflow is implemented, type-checked and tested only up to the `missing_config` path. Success, partial and failure paths with real keys are untested.
+- **Free-tier model quotas are small.** Google's free tier allowed 20 requests a day on `gemini-3.8-flash` for this key, and a guide takes 3 to 5 requests. When a model hits its quota, the app moves to the next model in `GEMINI_MODELS`. Lighter fallback models produced thinner guides in testing, with 8 claims against 16 to 22.
+- **Ambiguity detection depends on the model.** "Apollo" returned Apollo.io and Apollo GraphQL as choices, but one earlier run picked Apollo.io directly. "Mercury" always resolved to the bank. Any runner-up scoring 0.5 or more now triggers a choice.
+- **Large providers can exceed the time budget.** A run on an AWS address ended with an honest timeout during drafting. Nothing was saved.
+- **Research keeps running if the browser disconnects,** until it finishes or hits the 240-second limit.
 - **The rate limit is held in memory per instance.** Use Upstash or Postgres for a global limit.
 - **Firsthand coverage is thin.** There is one real registration, on GitHub. Google was read-only and Slack was blocked. Nothing was submitted for provider review, so no wait time is observed.
 - **Docs drift.** Every claim has a check date. Re-run the audit before relying on timelines.

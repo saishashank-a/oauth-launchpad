@@ -1,3 +1,4 @@
+import { isIP } from "node:net";
 import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { AppError, ConfigError } from "./errors";
@@ -93,6 +94,15 @@ async function pipeline(input: { query: string; website?: string }, emit: (ev: R
   let toolCalls = 0;
   const progress = (stage: Stage, message: string) => emit({ type: "progress", stage, message });
 
+  // Providers always have a public domain, so IP literals and local names are refused before any upstream call.
+  for (const raw of [query, input.website]) {
+    if (!raw) continue;
+    let host = "";
+    try { host = new URL(raw.includes("://") ? raw : `http://${raw.split(/\s/)[0]}`).hostname.replace(/^\[|\]$/g, ""); } catch { continue; }
+    if (isIP(host) || /^localhost$|\.(local|localhost|internal|test)$/i.test(host))
+      throw new AppError("bad_input", "Enter a provider name or its public website. IP addresses and local hostnames are not accepted.");
+  }
+
   // --- identify ---------------------------------------------------------------
   progress("identify", `Identifying the provider for "${query}"`);
   let website = input.website ?? parseDomainInput(query);
@@ -113,7 +123,8 @@ async function pipeline(input: { query: string; website?: string }, emit: (ev: R
       { maxTokens: 2000 });
     candidates.sort((a, b) => b.confidence - a.confidence);
     const [top, second] = candidates;
-    if (top.confidence < 0.7 || (second && top.confidence - second.confidence < 0.15)) {
+    // ponytail: model confidences vary run to run, so any plausible runner-up (>= 0.5) triggers clarification.
+    if (top.confidence < 0.7 || (second && (second.confidence >= 0.5 || top.confidence - second.confidence < 0.15))) {
       progress("identify", `"${query}" is ambiguous; pick the provider you meant`);
       emit({ type: "candidates", candidates: candidates.map(({ name, website, reason }) => ({ name, website, reason })) });
       return { slug: null };
